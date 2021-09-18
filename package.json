@@ -1,19 +1,30 @@
 {
-  "name": "jetrunner-cli",
-  "version": "1.0.0",
-  "description": "To run jetman suites not only on UI Application but also from command line interface.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/onetesthub/jetrunner-cli.git"
-  },
-  "author": "Onetesthub",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/onetesthub/jetrunner-cli/issues"
-  },
-  "homepage": "https://github.com/onetesthub/jetrunner-cli#readme"
+	"name": "jetrunner-cli",
+	"version": "1.0.0",
+	"description": "To run jetman suites not only on UI Application but also from command line interface.",
+	"main": "index.js",
+	"scripts": {
+		"test": "mocha"
+	},
+	"bin": {
+		"jetrun-cli": "index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/onetesthub/jetrunner-cli.git"
+	},
+	"author": "Jetmanlabs",
+	"bugs": {
+		"url": "https://github.com/onetesthub/jetrunner-cli/issues"
+	},
+	"homepage": "https://github.com/onetesthub/jetrunner-cli#readme",
+	"dependencies": {
+		"axios": "^0.21.1",
+		"chai": "^4.3.4",
+		"chalk": "^4.1.0",
+		"commander": "^7.2.0",
+		"jetRunner": "https://github.com/onetesthub/JetRunner.git#master",
+		"mocha": "^8.3.2",
+		"request": "^2.88.2"
+	}
 }
