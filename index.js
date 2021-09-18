@@ -43,7 +43,7 @@ let tokenId = null;
 const execChildProcess = async () => {
 	return new Promise((resolve, reject) => {
 		const { exec } = require('child_process');
-		if(process.platform === 'darwin'){
+		if (process.platform === 'darwin') {
 			exec('pwd', async (error, stdout, stderr) => {
 				if (error) {
 					resolve({ status: 'failed', message: error.message });
@@ -54,7 +54,7 @@ const execChildProcess = async () => {
 				let configFilePath = stdout.replace(/\r?\n|\r/, '') + '/configfile.json';
 				resolve({ status: 'success', configFilePath: configFilePath });
 			});
-		}else if(process.platform === 'win32'){
+		} else if (process.platform === 'win32') {
 			exec('cd', async (error, stdout, stderr) => {
 				if (error) {
 					resolve({ status: 'failed', message: error.message });
@@ -62,10 +62,10 @@ const execChildProcess = async () => {
 				if (stderr) {
 					resolve({ status: 'failed', message: stderr.message });
 				}
-				let configFilePath = stdout.replace(/\r?\n|\r/, '') + "configfile.json";
+				let configFilePath = stdout.replace(/\r?\n|\r/, '') + 'configfile.json';
 				resolve({ status: 'success', configFilePath: configFilePath });
 			});
-		}else{
+		} else {
 			resolve({ status: 'failed', message: 'Unhandled OS!' });
 		}
 	});
@@ -163,7 +163,7 @@ const readFile = async (path) => {
 			} else {
 				resolve({
 					status: 'failed',
-					message: 'Empty File'
+					message: 'Empty File',
 				});
 			}
 		});
@@ -384,6 +384,7 @@ function emptyTestDirectory() {
 			fs.readdir(path.join(__dirname, 'test'), (err, files) => {
 				if (err) resolve(false);
 				for (const file of files) {
+					if (file === '.gitkeep') continue;
 					fs.unlink(path.join(__dirname, 'test', file), (err) => {
 						if (err) resolve(false);
 					});
