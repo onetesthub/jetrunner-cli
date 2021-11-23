@@ -1,6 +1,6 @@
 {
 	"name": "jetrunner-cli",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "To run jetman suites not only on UI Application but also from command line interface.",
 	"main": "index.js",
 	"scripts": {
