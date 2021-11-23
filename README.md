@@ -26,7 +26,7 @@ You can download and install Node.js on Linux, Windows and MacOS.
 
 After you install Node.js jetman is just command away. Install Jetman-CLI module from npm globally on your system, which allow you to run it from anywhere.
 
-> $ npm install -g jetman-cli
+> $ npm install -g jetrunner-cli
 
 After successfull installation of node package, the very first thing is you need to select configFile path by passing --configfile / -c flag. If you not pass --configfile / -c flag then jetcli command will search for config file in current directory and if it doesn't find file in the directory than it'll through an error.
 
@@ -36,7 +36,7 @@ Config File is a JSON file in which we create a JSON object. Where we can create
 
 Each profile further contains the JSON object, where we can pass multiple key value pairs, for example projectPath, iteration, delay, timeout, env etc. Each key contains values as per your need.
 
-Click <a href="https://jetmanlabs.com/maindoc.html#download_and_installation" download>here</a> to download configfile.json. After downloading just move that file to location where you feel comfortable to access it later from command line and replace the default values as per your need.
+Click <a href="https://jetmanlabs.com/maindoc.html#runnercli_gettingStarted" download>here</a> to download configfile.json. After downloading just move that file to location where you feel comfortable to access it later from command line and replace the default values as per your need.
 
 In jetman cli we can pass diffrent flag like environment, iteration, delay, profile and lot more. We'll discuss these flags later.
 
