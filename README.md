@@ -44,7 +44,7 @@ In jetman cli we can pass diffrent flag like environment, iteration, delay, prof
 
 Jetman CLI provides a rich set of options to customize a run. You can retrieve a list of options by running it with the **-h || --help** flag.
 
-> $ jetcli --configfile "/path/of/configfile.json" --profile "profilename"
+> $ jetrunner-cli --configfile "/path/of/configfile.json" --profile "profilename"
 
 ## Utility ##
 
@@ -75,6 +75,6 @@ Jetman CLI provides a rich set of options to customize a run. You can retrieve a
 
 To provide a different set of data, such as (project path, configfile path, iteration, delay etc.) you can use the **-c || --configfile** to specify a JSON file.
 
-> $ jetcli --configfile "/path/of/configfile.json"
+> $ jetrunner-cli --configfile "/path/of/configfile.json"
 
 Note that, you have to surely mention profile name.

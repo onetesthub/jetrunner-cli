@@ -28,8 +28,8 @@ program
 
 program.on('--help', function () {
 	console.log('\nExamples:');
-	console.log('  $ jetmancli -h');
-	console.log('  $ jetmancli --help');
+	console.log('  $ jetrunner-cli -h');
+	console.log('  $ jetrunner-cli --help');
 });
 
 const cmdOptionsObj = program.opts();
