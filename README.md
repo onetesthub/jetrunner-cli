@@ -28,6 +28,11 @@ After you install Node.js jetman is just command away. Install Jetman-CLI module
 
 > $ npm install -g jetrunner-cli
 
+Note: If you get access error while installing or running the command, please run command as sudo.
+
+> $ sudo npm install -g jetrunner-cli
+
+
 After successfull installation of node package, the very first thing is you need to select configFile path by passing --configfile / -c flag. If you not pass --configfile / -c flag then jetcli command will search for config file in current directory and if it doesn't find file in the directory than it'll through an error.
 
 ## Config File ##
@@ -45,6 +50,10 @@ In jetman cli we can pass diffrent flag like environment, iteration, delay, prof
 Jetman CLI provides a rich set of options to customize a run. You can retrieve a list of options by running it with the **-h || --help** flag.
 
 > $ jetrunner-cli --configfile "/path/of/configfile.json" --profile "profilename"
+
+Note: If you get access error while running the command, please run command as sudo.
+
+> $ sudo jetrunner-cli --configfile "/path/of/configfile.json" --profile "profilename"
 
 ## Utility ##
 
@@ -77,4 +86,4 @@ To provide a different set of data, such as (project path, configfile path, iter
 
 > $ jetrunner-cli --configfile "/path/of/configfile.json"
 
-Note that, you have to surely mention profile name.
+Note that, you have to surely mention profile name. Run command as sudo user if you notice access error.
