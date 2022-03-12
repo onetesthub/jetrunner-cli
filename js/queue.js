@@ -1,5 +1,5 @@
 const request = require('request');
-const mktoEndPoint = 'http://localhost:8080';
+const mktoEndPoint = 'https://jetmanlabs.com';
 
 module.exports = class Queue {
 	constructor() {
