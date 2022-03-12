@@ -62,7 +62,7 @@ const execChildProcess = async () => {
 				if (stderr) {
 					resolve({ status: 'failed', message: stderr.message });
 				}
-				let configFilePath = stdout.replace(/\r?\n|\r/, '') + 'configfile.json';
+				let configFilePath = path.join(stdout.replace(/\r?\n|\r/, ''), 'configfile.json');
 				resolve({ status: 'success', configFilePath: configFilePath });
 			});
 		} else {
@@ -81,10 +81,7 @@ const loadProject = async () => {
 			projectPath: `${projectPath}`,
 		});
 
-		if (
-			suiteDataRes.status === 'success' &&
-			suiteDataRes.message === 'Project successfully Bootstrapped'
-		) {
+		if (suiteDataRes.status === 'success' && suiteDataRes.message === 'Project successfully Bootstrapped') {
 			const suiteData = suiteDataRes.data;
 			await suiteData.initSuites();
 
@@ -153,9 +150,7 @@ const readFile = async (path) => {
 			if (err) {
 				resolve({
 					status: 'failed',
-					message:
-						'Error: ENOENT: no such file! For more imformation regarding configfile.json please visit this link : ' +
-						chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI'),
+					message: 'Error: ENOENT: no such file! For more imformation regarding configfile.json please visit this link : ' + chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI'),
 					error: err,
 				});
 			} else if (jsonString != undefined) {
@@ -213,10 +208,7 @@ async function getFinalParameters() {
 			return;
 		}
 	} else {
-		console.log(
-			'Error: mention profile name you want to run , For more imformation regarding profile visit : ' +
-				chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI')
-		);
+		console.log('Error: mention profile name you want to run , For more imformation regarding profile visit : ' + chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI'));
 		return;
 	}
 
@@ -281,13 +273,6 @@ function generateRootSuiteTestFile(suite, selectedEnvObj, suiteData, tokenStatus
 		string += `\n}`;
 		string += `\n\nfunction sendResponse2ServerDB(responseObj,suiteName,requestName,requestObj,testId,projectName){`;
 		string += `\n\treturn new Promise((resolve, reject) => {`;
-		// string += `\n\t\tconsole.log('~ responseObj : ', responseObj);`;
-		// string += `\n\t\tconsole.log('~ requestObj : ', requestObj);`;
-		// string += `\n\t\tconsole.log('~ testId : ', testId);`;
-		// string += `\n\t\tconsole.log('~ tokenStatus : ', tokenStatus);`;
-		// string += `\n\t\tconsole.log('~ projectName : ', projectName);`;
-		// string += `\n\t\tconsole.log('~ suiteName : ', suiteName);`;
-		// string += `\n\t\tconsole.log('~ requestName : ', requestName);`;
 		string += `\n\t\tlet elasticObject = {};`;
 		string += `\n\t\telasticObject['suiteName'] = suiteName;`;
 		string += `\n\t\telasticObject['requestName'] = requestName;`;
@@ -366,9 +351,7 @@ function validateToken() {
 					if (error && body.status == 'empty') {
 						resolve({ status: 'error' });
 					} else if (body.status == 'success') {
-						body.userId != null
-							? resolve({ status: 'success', tokenId: body.tokenid, clientId: body.userId })
-							: resolve({ status: 'error' });
+						body.userId != null ? resolve({ status: 'success', tokenId: body.tokenid, clientId: body.userId }) : resolve({ status: 'error' });
 					}
 				}
 			);
