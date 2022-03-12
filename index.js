@@ -155,7 +155,7 @@ const readFile = async (path) => {
 					status: 'failed',
 					message:
 						'Error: ENOENT: no such file! For more imformation regarding configfile.json please visit this link : ' +
-						chalk.greenBright('https://www.google.com'),
+						chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI'),
 					error: err,
 				});
 			} else if (jsonString != undefined) {
@@ -215,7 +215,7 @@ async function getFinalParameters() {
 	} else {
 		console.log(
 			'Error: mention profile name you want to run , For more imformation regarding profile visit : ' +
-				chalk.greenBright('https://www.gogole.com')
+				chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI')
 		);
 		return;
 	}
