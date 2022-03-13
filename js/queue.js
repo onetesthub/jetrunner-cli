@@ -42,12 +42,10 @@ module.exports = class Queue {
 	}
 
 	length() {
-		console.log('\nLength of queue is :', this.elements.length);
 		return this.elements.length;
 	}
 
 	print() {
-		console.log('\nYour Queue is :', this.elements);
 		return this.elements;
 	}
 };
