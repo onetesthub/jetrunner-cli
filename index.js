@@ -8,11 +8,13 @@ const request = require('request');
 let Mocha = require('mocha');
 let mocha = new Mocha({});
 
-const version = require('./package.json').version,
-	{ Command } = require('commander'),
-	program = new Command();
-
+const version = require('./package.json').version;
+const { Command } = require('commander');
+const program = new Command();
 program.version(version, '--version');
+
+const prettier = require('prettier');
+const PrettierOptions = { trailingComma: 'es5', tabWidth: 2, useTabs: true, semi: true, singleQuote: true, bracketSpacing: true, bracketSameLine: true, arrowParens: 'always', endOfLine: 'lf', printWidth: 300, quoteProps: 'as-needed', parser: 'babel' };
 
 program
 	.option('-p, --projectPath <type>', 'Specify the path of a Jetman Project to run', '')
