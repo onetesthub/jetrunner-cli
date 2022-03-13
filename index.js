@@ -262,42 +262,43 @@ function generateRootSuiteTestFile(suite, selectedEnvObj, suiteData, tokenStatus
 	return new Promise(async (resolve, reject) => {
 		let projectName = projectPath.split('/').pop();
 		// Making string to be store in js file.....
-		let string = "let assert = require('chai').assert;";
-		string += "\nconst sendRequest = require('../js/sendingRequest.js');";
-		string += "\nconst extractVariable = require('../js/environment.js');";
-		string += "\nconst Queue = require('../js/queue.js');";
-		string += `\nlet q = new Queue();`;
-		string += `\n\nlet dynamicEnv = {};`;
-		string += `\nlet tokenStatus = ${JSON.stringify(tokenStatus)}`;
-		string += `\nlet selectedEnvObj = ${selectedEnvObj}`;
-		string += `\n\nfunction setEnv(key, value) {`;
-		string += `\n\tdynamicEnv[key] = value;`;
-		string += `\n}`;
-		string += `\n\nfunction sendResponse2ServerDB(responseObj,suiteName,requestName,requestObj,testId,projectName){`;
-		string += `\n\treturn new Promise((resolve, reject) => {`;
-		string += `\n\t\tlet elasticObject = {};`;
-		string += `\n\t\telasticObject['suiteName'] = suiteName;`;
-		string += `\n\t\telasticObject['requestName'] = requestName;`;
-		string += `\n\t\telasticObject['requestName'] = requestName;`;
-		string += `\n\t\telasticObject['url'] = requestObj.url;`;
-		string += `\n\t\telasticObject['statusCode'] = responseObj.status;`;
-		string += `\n\t\telasticObject['elapsedTime'] = responseObj.elapsedTime;`;
-		string += `\n\t\telasticObject['contentType'] = responseObj.contentType;`;
-		string += `\n\t\telasticObject['size'] = responseObj.contentLength;`;
-		string += `\n\t\telasticObject['testId'] = testId;`;
-		string += `\n\t\telasticObject['clientId'] = tokenStatus.clientId;`;
-		string += `\n\t\telasticObject['projectName'] = projectName;`;
-		string += `\n\t\telasticObject['tokenId'] = tokenStatus.tokenId;`;
-		string += `\n\t\telasticObject['body'] = responseObj.body;`;
-		string += `\n\t\telasticObject['assertionResult'] = 0;`;
-		string += `\n\t\telasticObject['timestamp'] = responseObj.timestamp;`;
-		string += `\n\t\tconsole.log('elasticObject :>> ', elasticObject);`;
-		string += `\n\t\tq.enqueue(elasticObject);`;
-		string += `\n\t\tresolve(true);`;
-		string += `\n\t});`;
-		string += `\n}`;
-		string += `\n\nfor(let i=1; i<=${iteration}; i++){`;
-		string += `\n\n\tdescribe('#${suite.suiteName} - Testing API Requests()', function() {`;
+		let string = `let assert = require('chai').assert;
+			const sendRequest = require('../js/sendingRequest.js');
+			const extractVariable = require('../js/environment.js');
+			const Queue = require('../js/queue.js');
+		    let q = new Queue();
+		    let dynamicEnv = {};
+		    let tokenStatus = ${JSON.stringify(tokenStatus)}
+		    let selectedEnvObj = ${selectedEnvObj}
+		    function setEnv(key, value) {
+		    dynamicEnv[key] = value;
+		    }
+		    function sendResponse2ServerDB(responseObj,suiteName,requestName,requestObj,testId,projectName){
+		    return new Promise((resolve, reject) => {
+		    let elasticObject = {
+		    suiteName: suiteName,
+		    requestName: requestName,
+		    requestName: requestName,
+		    url: requestObj.url,
+		    statusCode: responseObj.status,
+		    elapsedTime: responseObj.elapsedTime,
+		    contentType: responseObj.contentType,
+		    size: responseObj.contentLength,
+		    testId: testId,
+		    clientId: tokenStatus.clientId,
+		    projectName: projectName,
+		    tokenId: tokenStatus.tokenId,
+		    body: responseObj.body,
+		    assertionResult: 0,
+		    timestamp: responseObj.timestamp
+			}
+		    // console.log('elasticObject :>> ', elasticObject);
+		    q.enqueue(elasticObject);
+		    resolve(true);
+		    });
+		    }
+		    for(let i=1; i<=${iteration}; i++){
+		    describe('#${suite.suiteName} - Testing API Requests()', function() {`;
 
 		// getting all nested requests from the given root level suiteID
 		let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
@@ -305,34 +306,34 @@ function generateRootSuiteTestFile(suite, selectedEnvObj, suiteData, tokenStatus
 		// loop on request array from given suiteId
 		suiteRequests.forEach((request) => {
 			let reqObject = JSON.stringify(request.req.reqObj);
-			string += `\n\n\t\tit('${request.suiteName} - ${request.reqName}', async function() {`;
-			string += `\n\t\t\tlet reqObject = ${reqObject}`;
-			string += `\n\t\t\tlet extractedObject = extractVariable.extractVariables(reqObject, selectedEnvObj, dynamicEnv);`;
-			string += `\n\t\t\tlet response = await sendRequest.sendRequest(extractedObject, ${timeout});`;
+			string += `it('${request.suiteName} - ${request.reqName}', async function() {
+				let reqObject = ${reqObject};
+				let extractedObject = extractVariable.extractVariables(reqObject, selectedEnvObj, dynamicEnv);
+				// console.log('...url...:', extractedObject.url)
+				let response = await sendRequest.sendRequest(extractedObject, ${timeout});`;
 
 			if (cmdOptionsObj.verbose) {
-				string += `\n\t\t\tconsole.log("Response :", response);`;
+				string += `console.log("Response :", response);`;
 			}
 			if (request.req.reqObj.assertText) {
 				if (request.req.reqObj.assertText.length > 0) {
-					string += '\n\t\t\t' + request.req.reqObj.assertText;
+					string += `${request.req.reqObj.assertText};`;
 				}
 			}
 			if (request.req.reqObj.responseExtractorText) {
 				if (request.req.reqObj.responseExtractorText.length > 0) {
-					string += '\n\t\t\t' + request.req.reqObj.responseExtractorText;
+					string += `${request.req.reqObj.responseExtractorText};`;
 				}
 			}
 			if (tokenStatus.status == 'success') {
-				string += `\n\t\t\tawait sendResponse2ServerDB(response,'${request.suiteName}','${request.reqName}',${reqObject},'${testId}','${projectName}');`;
+				string += ` sendResponse2ServerDB(response,'${request.suiteName}','${request.reqName}',${reqObject},'${testId}','${projectName}');`;
 			}
-			string += '\n\t\t});';
+			string += '});';
 		});
 
-		string += '\n\n\t});';
-		string += '\n\n}';
-
-		fs.writeFile(__dirname + `/test/${suite.suiteName}.js`, `${string}`, function (err, result) {
+		string += '});}';
+		const formattedCode = prettier.format(string, PrettierOptions);
+		fs.writeFile(__dirname + `/test/${suite.suiteName}.js`, `${formattedCode}`, function (err, result) {
 			if (err) reject(err);
 			resolve(`Test file created successfully....`);
 		});
