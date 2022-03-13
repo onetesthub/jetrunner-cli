@@ -45,31 +45,17 @@ let tokenId = null;
 const execChildProcess = async () => {
 	return new Promise((resolve, reject) => {
 		const { exec } = require('child_process');
-		if (process.platform === 'darwin') {
-			exec('pwd', async (error, stdout, stderr) => {
-				if (error) {
-					resolve({ status: 'failed', message: error.message });
-				}
-				if (stderr) {
-					resolve({ status: 'failed', message: stderr.message });
-				}
-				let configFilePath = stdout.replace(/\r?\n|\r/, '') + '/configfile.json';
-				resolve({ status: 'success', configFilePath: configFilePath });
-			});
-		} else if (process.platform === 'win32') {
-			exec('cd', async (error, stdout, stderr) => {
-				if (error) {
-					resolve({ status: 'failed', message: error.message });
-				}
-				if (stderr) {
-					resolve({ status: 'failed', message: stderr.message });
-				}
-				let configFilePath = path.join(stdout.replace(/\r?\n|\r/, ''), 'configfile.json');
-				resolve({ status: 'success', configFilePath: configFilePath });
-			});
-		} else {
+		const osString = process.platform === 'darwin' ? 'pwd' : process.platform === 'win32' ? 'cd' : '';
+		if (!osString) {
 			resolve({ status: 'failed', message: 'Unhandled OS!' });
 		}
+		exec(osString, async (error, stdout, stderr) => {
+			if (error || stderr) {
+				resolve({ status: 'failed', message: stderr.message });
+			}
+			let configFilePath = path.join(stdout.replace(/\r?\n|\r/, ''), 'configfile.json');
+			resolve({ status: 'success', configFilePath: configFilePath });
+		});
 	});
 };
 
