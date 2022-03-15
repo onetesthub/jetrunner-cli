@@ -8,6 +8,7 @@ const Mocha = require('mocha');
 const version = require('./package.json').version;
 const { Command } = require('commander');
 const prettier = require('prettier');
+const { Log } = require('./js/log');
 
 let mocha = new Mocha({});
 const program = new Command();
