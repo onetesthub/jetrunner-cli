@@ -4,18 +4,15 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const request = require('request');
-
-let Mocha = require('mocha');
-let mocha = new Mocha({});
-
+const Mocha = require('mocha');
 const version = require('./package.json').version;
 const { Command } = require('commander');
-const program = new Command();
-program.version(version, '--version');
-
 const prettier = require('prettier');
-const PrettierOptions = { trailingComma: 'es5', tabWidth: 2, useTabs: true, semi: true, singleQuote: true, bracketSpacing: true, bracketSameLine: true, arrowParens: 'always', endOfLine: 'lf', printWidth: 300, quoteProps: 'as-needed', parser: 'babel' };
 
+let mocha = new Mocha({});
+const program = new Command();
+
+program.version(version, '--version');
 program
 	.option('-p, --projectPath <type>', 'Specify the path of a Jetman Project to run', '')
 	.option('-c, --configFile <type>', 'Specify the path of a Jetman configuration file', '')
@@ -27,12 +24,13 @@ program
 	.option('-v, --verbose', 'Used for debug to print entire request response')
 	.option('--tokenId <type>', 'Specify tokenid for storing response data to cloud')
 	.parse(process.argv);
-
 program.on('--help', function () {
 	console.log('\nExamples:');
 	console.log('  $ jetrunner-cli -h');
 	console.log('  $ jetrunner-cli --help');
 });
+
+const PrettierOptions = { trailingComma: 'es5', tabWidth: 2, useTabs: true, semi: true, singleQuote: true, bracketSpacing: true, bracketSameLine: true, arrowParens: 'always', endOfLine: 'lf', printWidth: 300, quoteProps: 'as-needed', parser: 'babel' };
 
 const cmdOptionsObj = program.opts();
 let delay = 0;
@@ -64,21 +62,16 @@ const loadProject = async () => {
 		if (!projectPath || projectPath.length === 0) {
 			resolve({ status: 'failed', message: 'projectPath not found!' });
 		}
-
 		const suiteDataRes = await new SuiteData({
 			projectPath: `${projectPath}`,
 		});
-
 		if (suiteDataRes.status === 'success' && suiteDataRes.message === 'Project successfully Bootstrapped') {
 			const suiteData = suiteDataRes.data;
 			await suiteData.initSuites();
-
 			// Declaring empty object to store envinment variables
 			let selectedEnvObj = {};
-
 			// Declaring new Set for storing unique root level suites name.
 			let rootSuitesSet = new Set();
-
 			// if user enter env flag then fetch environment variables
 			if (environment) {
 				let envDbResponse = await suiteData.getAllEnvironments();
@@ -90,22 +83,15 @@ const loadProject = async () => {
 					});
 				}
 			}
-
 			// getting all root level suites
 			let getAllRootSuites = await suiteData.getAllRootSuites();
-
 			if (getAllRootSuites.status === 'success' && getAllRootSuites.message === 'Data fetched') {
 				let tokenStatus = await validateToken();
-
 				let testId = new Date().getTime();
-
 				// assigning root level suites to the rootSuites variable
 				let rootSuites = getAllRootSuites.data;
-
 				selectedEnvObj = JSON.stringify(selectedEnvObj);
-
 				let emptyDirectoryRes = await emptyTestDirectory();
-
 				if (emptyDirectoryRes) {
 					// loop on root suites and generate test file for each root suite
 					for (let i = 0; i < rootSuites.length; i++) {
@@ -117,7 +103,6 @@ const loadProject = async () => {
 					resolve({ status: 'failed', message: 'error while removing files from test directory!' });
 				}
 			}
-
 			resolve({
 				status: 'success',
 				rootSuites: rootSuitesSet,
@@ -131,7 +116,6 @@ const loadProject = async () => {
 		}
 	});
 };
-
 const readFile = async (path) => {
 	return new Promise((resolve, reject) => {
 		fs.readFile(`${path}`, 'utf8', (err, jsonString) => {
@@ -179,7 +163,6 @@ async function getFinalParameters() {
 			return;
 		}
 	}
-
 	if (cmdOptionsObj.profile && cmdOptionsObj.profile.length > 0) {
 		if (fileData) {
 			let profileOption = cmdOptionsObj.profile;
@@ -199,33 +182,25 @@ async function getFinalParameters() {
 		console.log('Error: mention profile name you want to run , For more imformation regarding profile visit : ' + chalk.greenBright('https://jetmanlabs.com/jetmanDoc/#Jetman-CLI'));
 		return;
 	}
-
 	if (cmdOptionsObj.delay) {
 		delay = parseInt(cmdOptionsObj.delay, 10);
 	}
-
 	if (cmdOptionsObj.iteration) {
 		iteration = parseInt(cmdOptionsObj.iteration, 10);
 	}
-
 	if (cmdOptionsObj.timeout) {
 		timeout = parseInt(cmdOptionsObj.timeout, 10);
 	}
-
 	if (cmdOptionsObj.env) {
 		environment = cmdOptionsObj.env;
 	}
-
 	if (cmdOptionsObj.projectPath) {
 		projectPath = cmdOptionsObj.projectPath;
 	}
-
 	if (cmdOptionsObj.tokenId) {
 		tokenId = cmdOptionsObj.tokenId;
 	}
-
 	let loadProjectResponse = await loadProject();
-
 	if (loadProjectResponse.status === 'failed') {
 		console.log(chalk.redBright(`${loadProjectResponse.message}`));
 	} else {
