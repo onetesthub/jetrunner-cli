@@ -14,13 +14,13 @@ const program = new Command();
 
 program.version(version, '--version');
 program
-	.option('-p, --projectPath <type>', 'Specify the path of a Jetman Project to run', '')
-	.option('-c, --configFile <type>', 'Specify the path of a Jetman configuration file', '')
-	.option('--profile <type>', 'Specify the object to select from Jetman configuration file', '')
+	.option('-p, --projectPath <type>', 'Specify the path of a Jetman Project to run')
+	.option('-c, --configFile <type>', 'Specify the path of a Jetman configuration file')
+	.option('--profile <type>', 'Specify the object to select from Jetman configuration file')
 	.option('-d, --delay <type>', 'Specify the extent of delay between requests (milliseconds)')
 	.option('-t, --timeout <type>', 'Specify a timeout for request to run (milliseconds)')
 	.option('-i, --iteration <type>', 'Define the number of iterations to run')
-	.option('-e, --env <type>', 'Specify the project envirnment', '')
+	.option('-e, --env <type>', 'Specify the project envirnment')
 	.option('-v, --verbose', 'Used for debug to print entire request response')
 	.option('--tokenId <type>', 'Specify tokenid for storing response data to cloud')
 	.parse(process.argv);
