@@ -22,6 +22,7 @@ program
 	.option('-i, --iteration <type>', 'Define the number of iterations to run')
 	.option('-e, --env <type>', 'Specify the project envirnment')
 	.option('-v, --verbose', 'Used for debug to print entire request response')
+	.option('-j, --json', 'output data in JSON format')
 	.option('--tokenId <type>', 'Specify tokenid for storing response data to cloud')
 	.parse(process.argv);
 program.on('--help', function () {
