@@ -4,14 +4,12 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const request = require('request');
-const Mocha = require('mocha');
 const version = require('./package.json').version;
 const { Command } = require('commander');
-const prettier = require('prettier');
+// const prettier = require('prettier');
 const { rawLogger: Log } = require('./js/logger');
 const Execute = require('./js/execute');
 
-let mocha = new Mocha({});
 const program = new Command();
 
 program.version(version, '--version');
@@ -32,7 +30,7 @@ program.on('--help', function () {
 	console.log('  $ jetrunner-cli --help');
 });
 
-const PrettierOptions = { trailingComma: 'es5', tabWidth: 2, useTabs: true, semi: true, singleQuote: true, bracketSpacing: true, bracketSameLine: true, arrowParens: 'always', endOfLine: 'lf', printWidth: 300, quoteProps: 'as-needed', parser: 'babel' };
+// const PrettierOptions = { trailingComma: 'es5', tabWidth: 2, useTabs: true, semi: true, singleQuote: true, bracketSpacing: true, bracketSameLine: true, arrowParens: 'always', endOfLine: 'lf', printWidth: 300, quoteProps: 'as-needed', parser: 'babel' };
 
 const cmdOptionsObj = program.opts();
 let delay = 0;
