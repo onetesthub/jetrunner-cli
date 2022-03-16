@@ -35,26 +35,26 @@ const Message = (options) => {
 
 const Welcome = (projectname) => {
 	consoleLog(`\n${primary('Jetman CLI')} \n`);
-	projectname ? consoleLog(`Project name: ${projectname}\n`) : '\n';
+	projectname ? consoleLog(`Project name: ${projectname}`) : '';
 };
 
-const Pass = ({ method, name, statusCode, time }) => {
-	// ✔ | method | name | time | status | assert
-	consoleLog(`${sym.success} | ${method.toUpperCase()} | ${name} | ${time + 'ms'} | ${green(statusCode)} | ${green('Assertion Pass')}`);
+const Pass = ({ count, method, name, suiteName, statusCode, time }) => {
+	// ✔ | method | suitename | request name | time | status | assert
+	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${name} | ${time + 'ms'} | ${green(statusCode)} | ${green('Assertion Pass')}`);
 };
 
-const AssertionFail = ({ count, method, name, statusCode, time }) => {
-	// count | method | name | time | status | assert
-	consoleLog(`${count ? count : sym.warning} | ${method.toUpperCase()} | ${name} | ${time + 'ms'} | ${green(statusCode)} | ${red('Assertion Fail')}`);
+const AssertionFail = ({ count, method, suiteName, name, statusCode, time }) => {
+	// count | method | suite name | request name | time | status | assert
+	consoleLog(`${sym.warning} | ${count ? count : sym.warning} | ${method.toUpperCase()} | ${suiteName} | ${name} | ${time + 'ms'} | ${green(statusCode)} | ${red('Assertion Fail')}`);
 };
 
-const Fail = ({ count, method, name, statusCode, time }) => {
-	// ❌ | method | name | time | status | assert
-	consoleLog(`${count ? count : sym.error} | ${method.toUpperCase()} | ${name} | ${time ? time + 'ms' : '-'} | ${red(statusCode)} | -`);
+const Fail = ({ count, method, suiteName, name, statusCode, time }) => {
+	// ❌ | method | suite name | request name | time | status | assert
+	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${name} | ${time ? time + 'ms' : '-'} | ${red(statusCode)} | -`);
 };
 
 const log = ({ label, value }) => {
-	consoleLog(chalk.bold.yellow(`\n${label}: ${value}`));
+	consoleLog(chalk.hex('#FFA500').bold(`\n${label}: ${value}`));
 };
 
 const SuiteLabel = (suiteName) => {
@@ -62,8 +62,8 @@ const SuiteLabel = (suiteName) => {
 };
 
 const PrintTableLabel = () => {
-	// ❌ | method | name | time | status | assert
-	consoleLog(`Count OR label | method | request name | time taken | status code | Assertion status`);
+	// ❌ | method | suite name | request name | time | status | assert
+	consoleLog(`Sr. no. | method | Suite name | Request name | time taken | status code | Assertion status\n`);
 };
 
 let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel };
