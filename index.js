@@ -8,7 +8,8 @@ const Mocha = require('mocha');
 const version = require('./package.json').version;
 const { Command } = require('commander');
 const prettier = require('prettier');
-const { Log } = require('./js/log');
+const { rawLogger: Log } = require('./js/logger');
+const Execute = require('./js/execute');
 
 let mocha = new Mocha({});
 const program = new Command();
@@ -58,10 +59,10 @@ const execChildProcess = async () => {
 	});
 };
 
-const loadProject = async () => {
+const RunProject = async () => {
 	return new Promise(async (resolve, reject) => {
 		if (!projectPath || projectPath.length === 0) {
-			resolve({ status: 'failed', message: 'projectPath not found!' });
+			resolve({ status: 'failed', message: 'project  path not found!' });
 		}
 		const suiteDataRes = await new SuiteData({
 			projectPath: `${projectPath}`,
@@ -71,8 +72,6 @@ const loadProject = async () => {
 			await suiteData.initSuites();
 			// Declaring empty object to store envinment variables
 			let selectedEnvObj = {};
-			// Declaring new Set for storing unique root level suites name.
-			let rootSuitesSet = new Set();
 			// if user enter env flag then fetch environment variables
 			if (environment) {
 				let envDbResponse = await suiteData.getAllEnvironments();
@@ -94,19 +93,22 @@ const loadProject = async () => {
 				selectedEnvObj = JSON.stringify(selectedEnvObj);
 				let emptyDirectoryRes = await emptyTestDirectory();
 				if (emptyDirectoryRes) {
+					let projectName = projectPath.split('/').pop();
+					Log.Welcome(projectName);
 					// loop on root suites and generate test file for each root suite
-					for (let i = 0; i < rootSuites.length; i++) {
-						let suite = rootSuites[i];
-						rootSuitesSet.add(suite.suiteName);
-						await generateRootSuiteTestFile(suite, selectedEnvObj, suiteData, tokenStatus, testId);
+					let data = {}; // {suitename: [requests]}
+					for (const suite of rootSuites) {
+						let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
+						data[suite.suiteName] = suiteRequests;
 					}
+					await Execute({ data, iteration, envObj: selectedEnvObj });
+					resolve();
 				} else {
 					resolve({ status: 'failed', message: 'error while removing files from test directory!' });
 				}
 			}
 			resolve({
 				status: 'success',
-				rootSuites: rootSuitesSet,
 				envObj: selectedEnvObj,
 			});
 		} else {
@@ -117,6 +119,7 @@ const loadProject = async () => {
 		}
 	});
 };
+
 const readFile = async (path) => {
 	return new Promise((resolve, reject) => {
 		fs.readFile(`${path}`, 'utf8', (err, jsonString) => {
@@ -138,7 +141,50 @@ const readFile = async (path) => {
 	});
 };
 
-async function getFinalParameters() {
+function validateToken() {
+	if (tokenId != null) {
+		return new Promise(function (resolve, reject) {
+			let commonapiendpoint = 'https://api.jetmanlabs.com/api';
+			request(
+				{
+					url: `${commonapiendpoint}/validateToken/${tokenId}`,
+					method: 'GET',
+					json: true,
+				},
+				(error, res, body) => {
+					if (error && body.status == 'empty') {
+						resolve({ status: 'error' });
+					} else if (body.status == 'success') {
+						body.userId != null ? resolve({ status: 'success', tokenId: body.tokenid, clientId: body.userId }) : resolve({ status: 'error' });
+					}
+				}
+			);
+		});
+	} else {
+		return { status: 'error' };
+	}
+}
+
+function emptyTestDirectory() {
+	return new Promise((resolve, reject) => {
+		try {
+			fs.readdir(path.join(__dirname, 'test'), (err, files) => {
+				if (err) resolve(false);
+				for (const file of files) {
+					if (file === '.gitkeep') continue;
+					fs.unlink(path.join(__dirname, 'test', file), (err) => {
+						if (err) resolve(false);
+					});
+				}
+			});
+			resolve(true);
+		} catch (error) {
+			resolve(false);
+		}
+	});
+}
+
+(async function () {
 	let fileData;
 
 	if (cmdOptionsObj.configFile && cmdOptionsObj.configFile.length > 0) {
@@ -201,146 +247,5 @@ async function getFinalParameters() {
 	if (cmdOptionsObj.tokenId) {
 		tokenId = cmdOptionsObj.tokenId;
 	}
-	let loadProjectResponse = await loadProject();
-	if (loadProjectResponse.status === 'failed') {
-		console.log(chalk.redBright(`${loadProjectResponse.message}`));
-	} else {
-		let testDir = __dirname + '/test/';
-		fs.readdirSync(testDir)
-			.filter(function (file) {
-				return file.substr(-3) === '.js';
-			})
-			.forEach(function (file) {
-				mocha.addFile(path.join(testDir, file));
-			});
-		mocha.run(function (failures) {
-			process.exitCode = failures ? 1 : 0; // exit with non-zero status if there were failures
-		});
-	}
-}
-getFinalParameters();
-
-function generateRootSuiteTestFile(suite, selectedEnvObj, suiteData, tokenStatus, testId) {
-	return new Promise(async (resolve, reject) => {
-		let projectName = projectPath.split('/').pop();
-		// Making string to be store in js file.....
-		let string = `let assert = require('chai').assert;
-			const sendRequest = require('../js/sendingRequest.js');
-			const extractVariable = require('../js/environment.js');
-			const Queue = require('../js/queue.js');
-		    let q = new Queue();
-		    let dynamicEnv = {};
-		    let tokenStatus = ${JSON.stringify(tokenStatus)}
-		    let selectedEnvObj = ${selectedEnvObj}
-		    function setEnv(key, value) {
-		    dynamicEnv[key] = value;
-		    }
-		    function sendResponse2ServerDB(responseObj,suiteName,requestName,requestObj,testId,projectName){
-		    return new Promise((resolve, reject) => {
-		    let elasticObject = {
-		    suiteName: suiteName,
-		    requestName: requestName,
-		    requestName: requestName,
-		    url: requestObj.url,
-		    statusCode: responseObj.status,
-		    elapsedTime: responseObj.elapsedTime,
-		    contentType: responseObj.contentType,
-		    size: responseObj.contentLength,
-		    testId: testId,
-		    clientId: tokenStatus.clientId,
-		    projectName: projectName,
-		    tokenId: tokenStatus.tokenId,
-		    body: responseObj.body,
-		    assertionResult: 0,
-		    timestamp: responseObj.timestamp
-			}
-		    // console.log('elasticObject :>> ', elasticObject);
-		    q.enqueue(elasticObject);
-		    resolve(true);
-		    });
-		    }
-		    for(let i=1; i<=${iteration}; i++){
-		    describe('#${suite.suiteName} - Testing API Requests()', function() {`;
-
-		// getting all nested requests from the given root level suiteID
-		let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
-
-		// loop on request array from given suiteId
-		suiteRequests.forEach((request) => {
-			let reqObject = JSON.stringify(request.req.reqObj);
-			string += `it('${request.suiteName} - ${request.reqName}', async function() {
-				let reqObject = ${reqObject};
-				let extractedObject = extractVariable.extractVariables(reqObject, selectedEnvObj, dynamicEnv);
-				// console.log('...url...:', extractedObject.url)
-				let response = await sendRequest.sendRequest(extractedObject, ${timeout});`;
-
-			if (cmdOptionsObj.verbose) {
-				string += `console.log("Response :", response);`;
-			}
-			if (request.req.reqObj.assertText) {
-				if (request.req.reqObj.assertText.length > 0) {
-					string += `${request.req.reqObj.assertText};`;
-				}
-			}
-			if (request.req.reqObj.responseExtractorText) {
-				if (request.req.reqObj.responseExtractorText.length > 0) {
-					string += `${request.req.reqObj.responseExtractorText};`;
-				}
-			}
-			if (tokenStatus.status == 'success') {
-				string += ` sendResponse2ServerDB(response,'${request.suiteName}','${request.reqName}',${reqObject},'${testId}','${projectName}');`;
-			}
-			string += '});';
-		});
-
-		string += '});}';
-		const formattedCode = prettier.format(string, PrettierOptions);
-		fs.writeFile(__dirname + `/test/${suite.suiteName}.js`, `${formattedCode}`, function (err, result) {
-			if (err) reject(err);
-			resolve(`Test file created successfully....`);
-		});
-	});
-}
-
-function validateToken() {
-	if (tokenId != null) {
-		return new Promise(function (resolve, reject) {
-			let commonapiendpoint = 'https://api.jetmanlabs.com/api';
-			request(
-				{
-					url: `${commonapiendpoint}/validateToken/${tokenId}`,
-					method: 'GET',
-					json: true,
-				},
-				(error, res, body) => {
-					if (error && body.status == 'empty') {
-						resolve({ status: 'error' });
-					} else if (body.status == 'success') {
-						body.userId != null ? resolve({ status: 'success', tokenId: body.tokenid, clientId: body.userId }) : resolve({ status: 'error' });
-					}
-				}
-			);
-		});
-	} else {
-		return { status: 'error' };
-	}
-}
-
-function emptyTestDirectory() {
-	return new Promise((resolve, reject) => {
-		try {
-			fs.readdir(path.join(__dirname, 'test'), (err, files) => {
-				if (err) resolve(false);
-				for (const file of files) {
-					if (file === '.gitkeep') continue;
-					fs.unlink(path.join(__dirname, 'test', file), (err) => {
-						if (err) resolve(false);
-					});
-				}
-			});
-			resolve(true);
-		} catch (error) {
-			resolve(false);
-		}
-	});
-}
+	await RunProject();
+})();
