@@ -17,6 +17,8 @@ module.exports = Execute = ({ data, iteration, envObj }) => {
 			let totalIteration = iteration || 1;
 			let iterator = 1;
 			Log.PrintTableLabel();
+			let debugData = {};
+			let errorLogCounter = 1;
 			while (iterator <= totalIteration) {
 				// iteration loop starts
 				Log.log({ label: 'Itertation', value: iterator });
@@ -27,35 +29,46 @@ module.exports = Execute = ({ data, iteration, envObj }) => {
 					for (const request of data[suiteName]) {
 						// request loop starts (request on 1 suite)
 						let parsedRequest = extractVariables(request, envObj, dynamicEnv);
-						abc = parsedRequest;
 						let response = await sendReq(parsedRequest.req);
 						const dataToLog = {
-							method: request.req.reqObj.type,
-							name: request.reqName,
+							method: parsedRequest.req.reqObj.type,
+							name: parsedRequest.reqName,
 							statusCode: response.response.status,
 							time: response.response.elapsedTime || 0,
 						};
-
+						// console.error(40)
 						if (dataToLog.statusCode >= 200 && dataToLog.statusCode <= 299) {
-							if (response.response.errorLog && response.response.errorLog.length) {
+							const errorLog = response.errorLog;
+							// console.error(errorLog);
+							if (errorLog && errorLog.length) {
 								// request pass && assertion fail
-								Log.AssertionFail(dataToLog);
+								Log.AssertionFail({ ...dataToLog, count: errorLogCounter });
+								debugData[errorLogCounter] = { name: parsedRequest.reqName, errorLog };
+								errorLogCounter++;
 							} else {
 								// request pass && assertion pass
 								Log.Pass(dataToLog);
 							}
 						} else {
 							// request fail
-							Log.Fail(dataToLog);
+							Log.Fail({ ...dataToLog, count: errorLogCounter });
+							let errorLog = response.response ? [`status: ${response.response.status}` /*, `data: ${response.response.body}`*/] : '';
+							debugData[errorLogCounter] = { name: parsedRequest.reqName, errorLog };
+							errorLogCounter++;
 						}
 						// request loop ends
 					}
-					// Log.Message({ type: 'warn', msg: 'remove later' });
-					// if (true) break;
 					// suite loop ends
 				}
 				iterator++;
 				// iteration loop ends
+			}
+			console.error('\nError logs\n');
+			for (const count in debugData) {
+				console.error(`${count}. ${debugData[count].name}`);
+				for (const error of debugData[count].errorLog) {
+					console.error(error);
+				}
 			}
 			resolve();
 		} catch (error) {
@@ -85,9 +98,9 @@ const sendReq = (request) => {
 
 // method - name - status code - time taken - assertion
 const CheckAssertion = ({ assertionText, request, response }) => {
-	console.log(assertionText);
 	return new Promise((resolve, reject) => {
 		try {
+			// console.error(request);
 			let errorLog = [];
 			if ((typeof assertionText).toLowerCase() !== 'string') {
 				throw { type: 'custom', message: 'Unknown assertion type' };
