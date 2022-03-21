@@ -7,17 +7,22 @@ const sendRequest = (reqObject, timeout) => {
 			let axiosObject = {};
 			axiosObject['method'] = `${reqObject.type}`;
 			axiosObject['url'] = `${reqObject.url}`;
-			if (reqObject.params) axiosObject['params'] = reqObject.params;
-			if (reqObject.headers) axiosObject['headers'] = reqObject.headers;
+			if (reqObject.params) {
+				axiosObject['params'] = reqObject.params;
+			}
+			if (reqObject.headers) {
+				axiosObject['headers'] = reqObject.headers;
+			}
 			let data;
 			try {
 				data = JSON.parse(reqObject.data);
 			} catch (error) {
 				data = reqObject.data;
 			}
-			if (data) axiosObject['data'] = data;
+			if (data) {
+				axiosObject['data'] = data;
+			}
 			axiosObject['timeout'] = timeout;
-			//consoleLog(axiosObject);
 			const startTime = new Date().getTime();
 			axios(axiosObject)
 				.then(function (response) {
@@ -32,7 +37,6 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				})
 				.catch(function (error) {
-					console.log('error :>> ', error);
 					let endTime = new Date().getTime();
 					resolve({
 						body: error.response ? error.response.data : '',
@@ -44,9 +48,7 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				});
 		} catch (error) {
-			consoleLog('reqObject.url :>> ', reqObject.url);
-			consoleLog('error in sendRequest() :>> ', error);
-			resolve();
+			reject();
 		}
 	});
 };
