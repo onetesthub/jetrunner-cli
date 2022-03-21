@@ -5,7 +5,6 @@ const sendRequest = (reqObject, timeout) => {
 	return new Promise((resolve, reject) => {
 		try {
 			let axiosObject = {};
-			let startTime = new Date().getTime();
 			axiosObject['method'] = `${reqObject.type}`;
 			axiosObject['url'] = `${reqObject.url}`;
 			if (reqObject.params) axiosObject['params'] = reqObject.params;
@@ -19,6 +18,7 @@ const sendRequest = (reqObject, timeout) => {
 			if (data) axiosObject['data'] = data;
 			axiosObject['timeout'] = timeout;
 			//consoleLog(axiosObject);
+			const startTime = new Date().getTime();
 			axios(axiosObject)
 				.then(function (response) {
 					let endTime = new Date().getTime();
@@ -32,12 +32,13 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				})
 				.catch(function (error) {
+					console.log('error :>> ', error);
 					let endTime = new Date().getTime();
 					resolve({
-						body: error.response.data,
-						status: error.response.status,
-						contentType: error.response.headers['content-type'],
-						contentLength: error.response.headers['content-length'],
+						body: error.response ? error.response.data : '',
+						status: error.response ? error.response.status : '',
+						contentType: error.response ? error.response.headers['content-type'] : '',
+						contentLength: error.response ? error.response.headers['content-length'] : '',
 						elapsedTime: endTime - startTime,
 						timestamp: startTime,
 					});
