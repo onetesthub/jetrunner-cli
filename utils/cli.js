@@ -10,7 +10,7 @@ const flags = {
 	},
 	debug: {
 		type: `boolean`,
-		default: true,
+		default: false,
 		// alias: `d`,
 		desc: `Prints parsed arguments`,
 	},
