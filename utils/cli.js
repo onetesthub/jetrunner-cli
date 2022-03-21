@@ -4,7 +4,7 @@ const Table = require('cli-table3');
 const flags = {
 	clear: {
 		type: `boolean`,
-		default: true,
+		default: false,
 		// alias: `c`,
 		desc: `Clear the console`,
 	},

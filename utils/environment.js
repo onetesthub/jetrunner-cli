@@ -67,7 +67,6 @@ function extractVariables(obj, envTemplateData, dynamicEnv) {
 						let envVariable = __offset.split('{')[1];
 						for (dynamicEnvKey in dynamicEnv) {
 							if (dynamicEnvKey == envVariable) {
-								console.log(71);
 								return dynamicEnv[dynamicEnvKey];
 							}
 						}

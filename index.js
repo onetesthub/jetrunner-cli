@@ -17,9 +17,7 @@ const ExecuteProject = require('./utils/index');
 const input = cli.input;
 const flags = cli.flags;
 const { clear, debug } = flags;
-// process.on('unhandledRejection', error=>{
-// 	console.log('....unhandledRejection....', error);
-// })
+
 (async () => {
 	try {
 		init({ clear });
@@ -27,7 +25,9 @@ const { clear, debug } = flags;
 			cli.showHelp(0);
 		}
 		let ParsedArguments = await parseArguments(flags);
-		console.log(ParsedArguments);
+		if(debug && debug === 'true'|| debug === true){
+			console.log(ParsedArguments);
+		}
 		ExecuteProject(ParsedArguments);
 	} catch (error) {
 		// todo: log error

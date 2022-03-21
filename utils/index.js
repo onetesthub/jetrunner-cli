@@ -3,7 +3,7 @@ const { ValidateToken } = require('./helper');
 //
 const assert = require('chai').assert;
 const { sendRequest: Send } = require('./sendingRequest');
-const { consoleLog, jsonLogger, rawLogger } = require('./logger/index');
+const { consoleLog, GetLogger } = require('./logger/index');
 const { extractVariables } = require('./environment');
 
 // check logger by user, default to raw
@@ -16,11 +16,8 @@ module.exports = ExecuteProject = (configArgments) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const { project, env, token, iteration, json, debug } = configArgments;
-			if (json && json == 'true') {
-				Log = jsonLogger;
-			} else {
-				Log = rawLogger;
-			}
+			const loggerType = json === true || json === 'true' ? 'json' : 'raw';
+			Log = GetLogger(loggerType);
 			if (!project) {
 				throw { type: 'custom', message: 'No project path given' };
 			}
