@@ -8,9 +8,6 @@ const { extractVariables } = require('./environment');
 
 // check logger by user, default to raw
 let Log;
-if (true) {
-	Log = rawLogger;
-}
 
 let dynamicEnv = {};
 
@@ -18,9 +15,13 @@ let dynamicEnv = {};
 module.exports = ExecuteProject = (configArgments) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const { project, env, token, iteration } = configArgments;
+			const { project, env, token, iteration, json, debug } = configArgments;
+			if (json && json == 'true') {
+				Log = jsonLogger;
+			} else {
+				Log = rawLogger;
+			}
 			if (!project) {
-				console.log('configArgments :>> ', configArgments);
 				throw { type: 'custom', message: 'No project path given' };
 			}
 			const suiteDataRes = await new SuiteData({ projectPath: project });
@@ -58,17 +59,23 @@ module.exports = ExecuteProject = (configArgments) => {
 			let projectName = project.split('/').pop();
 			// todo: Log.Welcome(projectName);
 			// loop on root suites and generate test file for each root suite
-			let data = {}; // {suitename: [requests]}
+			let data = {};
 			for (const suite of rootSuites) {
 				let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
 				data[suite.suiteName] = suiteRequests;
 			}
-			await Execute({ data, iteration, envObj: selectedEnvObj });
+			const { debugData } = await Execute({ data, iteration, envObj: selectedEnvObj });
+			if (debug && (debug === 'true' || debug === true) && debugData) {
+				console.error('\nError logs');
+				for (const count in debugData) {
+					console.error(`\n${count}. ${debugData[count].name}`);
+					for (const error of debugData[count].errorLog) {
+						console.error(error);
+					}
+				}
+			}
 			resolve();
-
-			// ! -----------------------
 		} catch (error) {
-			console.log('error :>> ', error);
 			const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error.';
 			reject({ message });
 		}
@@ -127,14 +134,7 @@ const Execute = ({ data, iteration, envObj }) => {
 				iterator++;
 				// iteration loop ends
 			}
-			console.error('\nError logs');
-			for (const count in debugData) {
-				console.error(`\n${count}. ${debugData[count].name}`);
-				for (const error of debugData[count].errorLog) {
-					console.error(error);
-				}
-			}
-			resolve();
+			resolve({ debugData });
 		} catch (error) {
 			console.log('18: ', error);
 			const message = error && error.type == 'custom' ? error.message : 'Unexpected error';
@@ -152,7 +152,6 @@ const sendReq = (request) => {
 			request.reqObj.responseExtractorText && (await ExtractDynamicVariables({ extractorText: request.reqObj.responseExtractorText, request, response }));
 			resolve({ response, errorLog });
 		} catch (error) {
-			console.log('error..:..', error);
 			const message = error && error.type == 'custom' ? error.message : 'Unexpected error';
 			reject({ message });
 		}
