@@ -18,8 +18,7 @@ const sendRequest = (reqObject, timeout) => {
 			}
 			if (data) axiosObject['data'] = data;
 			axiosObject['timeout'] = timeout;
-			consoleLog(axiosObject);
-			consoleLog(typeof axiosObject);
+			//consoleLog(axiosObject);
 			axios(axiosObject)
 				.then(function (response) {
 					let endTime = new Date().getTime();

@@ -53,7 +53,7 @@ module.exports = ExecuteProject = (configArgments) => {
 			// assigning root level suites to the rootSuites variable
 			let rootSuites = getAllRootSuites.data;
 			selectedEnvObj = JSON.stringify(selectedEnvObj);
-			console.log('rootSuites :>> ', rootSuites);
+			//console.log('rootSuites :>> ', rootSuites);
 			// ! ---
 			let projectName = project.split('/').pop();
 			// todo: Log.Welcome(projectName);

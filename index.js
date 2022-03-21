@@ -27,6 +27,7 @@ const { clear, debug } = flags;
 			cli.showHelp(0);
 		}
 		let ParsedArguments = await parseArguments(flags);
+		console.log(ParsedArguments);
 		ExecuteProject(ParsedArguments);
 	} catch (error) {
 		// todo: log error
