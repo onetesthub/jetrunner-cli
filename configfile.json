@@ -1,0 +1,18 @@
+{
+	"profile1": {
+		"project": "test_files",
+		"iteration": 1,
+		"delay": 0,
+		"timeout": 30000,
+		"env": "prod",
+		"token": ""
+	},
+	"profile2": {
+		"project": "test_files",
+		"iteration": 1,
+		"delay": 0,
+		"timeout": 30000,
+		"env": "prod",
+		"token": ""
+	}
+}

@@ -1,0 +1,2 @@
+{"envName":"prod","_id":"9Fhe716LNl1NQKTJ","data":{"hostname":"mock.jetmanlabs.com","mktohostname":"jetmanlabs.com"},"isactive":true}
+{"envName":"dev","_id":"lJluCMdc5qj6wRhd","data":{"hostname":"localhost:8080","mktohostname":"localhost:8080"},"isactive":false}

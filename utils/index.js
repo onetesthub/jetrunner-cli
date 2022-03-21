@@ -1,3 +1,6 @@
+const { SuiteData } = require('jetRunner');
+const { ValidateToken } = require('./helper');
+//
 const assert = require('chai').assert;
 const { sendRequest: Send } = require('./sendingRequest');
 const { consoleLog, jsonLogger, rawLogger } = require('./logger/index');
@@ -11,7 +14,68 @@ if (true) {
 
 let dynamicEnv = {};
 
-module.exports = Execute = ({ data, iteration, envObj }) => {
+//
+module.exports = ExecuteProject = (configArgments) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const { project, env, token, iteration } = configArgments;
+			if (!project) {
+				console.log('configArgments :>> ', configArgments);
+				throw { type: 'custom', message: 'No project path given' };
+			}
+			const suiteDataRes = await new SuiteData({ projectPath: project });
+			if (suiteDataRes.status !== 'success') {
+				throw { type: 'custom', message: 'Not a Valid Jetman project.' };
+			}
+			const suiteData = suiteDataRes.data;
+			await suiteData.initSuites();
+			// Declaring empty object to store envinment variables
+			let selectedEnvObj = {};
+			// if user enter env flag then fetch environment variables
+			if (env) {
+				let envDbResponse = await suiteData.getAllEnvironments();
+				if (envDbResponse.status == 'success' && envDbResponse.message == 'Data fetched') {
+					envDbResponse.data.forEach((envObj) => {
+						if (envObj.envName == env) {
+							selectedEnvObj = envObj.data;
+						}
+					});
+				}
+			}
+			// getting all root level suites
+			let getAllRootSuites = await suiteData.getAllRootSuites();
+			if (getAllRootSuites.status !== 'success') {
+				throw { type: 'custom', message: 'Error while fetching suites' };
+			}
+			// Log.log({label: '95', value: 'data'});
+			const tokenStatus = token && (await ValidateToken(token));
+			const testId = new Date().getTime();
+			// assigning root level suites to the rootSuites variable
+			let rootSuites = getAllRootSuites.data;
+			selectedEnvObj = JSON.stringify(selectedEnvObj);
+			console.log('rootSuites :>> ', rootSuites);
+			// ! ---
+			let projectName = project.split('/').pop();
+			// todo: Log.Welcome(projectName);
+			// loop on root suites and generate test file for each root suite
+			let data = {}; // {suitename: [requests]}
+			for (const suite of rootSuites) {
+				let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
+				data[suite.suiteName] = suiteRequests;
+			}
+			await Execute({ data, iteration, envObj: selectedEnvObj });
+			resolve();
+
+			// ! -----------------------
+		} catch (error) {
+			console.log('error :>> ', error);
+			const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error.';
+			reject({ message });
+		}
+	});
+};
+
+const Execute = ({ data, iteration, envObj }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let totalIteration = iteration || 1;
