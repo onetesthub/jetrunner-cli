@@ -15,19 +15,20 @@ module.exports = (args = {}) => {
 			let projectPath, profileData;
 			const configFilePath = cliArguments.configFile || path.join(dirOfExecution, configFileName);
 			try {
-				const fileDataString = await ReadFile(configFilePath);
-				const fileData = JSON.parse(fileDataString);
-				if (Object.keys(fileData).length == 1) {
-					profileData = fileData[Object.keys(fileData)[0]];
-				} else if (cliArguments.profile) {
-					profileData = fileData[cliArguments.profile];
-					if (!profileData) {
-						throw { type: 'custom', message: `Selected profile doesn't exists` };
+				if (await FileExists(configFilePath)) {
+					const fileDataString = await ReadFile(configFilePath);
+					const fileData = JSON.parse(fileDataString);
+					if (Object.keys(fileData).length == 1) {
+						profileData = fileData[Object.keys(fileData)[0]];
+					} else if (cliArguments.profile) {
+						profileData = fileData[cliArguments.profile];
+						if (!profileData) {
+							throw { type: 'custom', message: `Selected profile doesn't exists` };
+						}
+					} else {
+						throw { type: 'custom', message: 'Please specify profile using --profile <profile name>' };
 					}
-				} else {
-					throw { type: 'custom', message: 'Please specify profile using --profile <profile name>' };
 				}
-				//
 				cliArguments = { ...profileData, ...cliArguments };
 				if (!cliArguments.project || !(await FolderExists(cliArguments.project)) || !(await FileExists(path.join(cliArguments.project, dbEntryPoint)))) {
 					throw { type: 'custom', message: chalk.red('No project found') + ', please specify project path using --project <project path> or run this command from project directory\n Run jetrunner-cli --help for options\n' };

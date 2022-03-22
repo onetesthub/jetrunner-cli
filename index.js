@@ -25,7 +25,7 @@ const { clear, debug } = flags;
 			cli.showHelp(0);
 		}
 		let ParsedArguments = await parseArguments(flags);
-		if(debug && debug === 'true'|| debug === true){
+		if (debug === 'true' || debug === true) {
 			console.log(ParsedArguments);
 		}
 		ExecuteProject(ParsedArguments);
