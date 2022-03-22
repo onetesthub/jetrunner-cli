@@ -22,10 +22,10 @@ module.exports = (args = {}) => {
 						profileData = fileData[Object.keys(fileData)[0]];
 					} else if (cliArguments.profile) {
 						profileData = fileData[cliArguments.profile];
-						if (!profileData) {
+						if (!profileData && !cliArguments.project) {
 							throw { type: 'custom', message: `Selected profile doesn't exists` };
 						}
-					} else {
+					} else if(!cliArguments.project) {
 						throw { type: 'custom', message: 'Please specify profile using --profile <profile name>' };
 					}
 				}
