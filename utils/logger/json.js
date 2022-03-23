@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+/*const chalk = require('chalk');
 const sym = require('log-symbols');
 
 const green = chalk.green;
@@ -66,3 +66,4 @@ const PrintTableLabel = () => {
 let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel };
 
 module.exports = Log;
+*/

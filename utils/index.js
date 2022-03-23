@@ -13,8 +13,8 @@ let dynamicEnv = {};
 module.exports = ExecuteProject = (configArgments) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const { project, env, tokenId, iteration, json, debug } = configArgments;
-			const loggerType = json === true || json === 'true' ? 'json' : 'raw';
+			const { project, env, tokenId, iteration, debug, showAll } = configArgments;
+			const loggerType = 'raw';
 			Log = GetLogger(loggerType);
 			if (!project) {
 				throw { type: 'custom', message: 'No project path given' };
@@ -60,7 +60,7 @@ module.exports = ExecuteProject = (configArgments) => {
 				let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
 				data[suite.suiteName] = suiteRequests;
 			}
-			let statusData = await Execute({ data, iteration, envObj: selectedEnvObj, projectName, debug });
+			let statusData = await Execute({ data, iteration, envObj: selectedEnvObj, projectName, debug, showAll });
 			resolve(statusData);
 		} catch (error) {
 			consoleLog('Error: ', error)
@@ -69,7 +69,7 @@ module.exports = ExecuteProject = (configArgments) => {
 	});
 };
 
-const Execute = ({ data, iteration, envObj, projectName, debug }) => {
+const Execute = ({ data, iteration, envObj, projectName, debug, showAll }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let totalIteration = iteration || 1;
@@ -146,21 +146,19 @@ const Execute = ({ data, iteration, envObj, projectName, debug }) => {
 							}
 						}
 						testSummary.totalRequestCount = testSummary.totalRequestCount +1;
-						requestResponseDetail[requestCounter] = {requestMetaData:metricData,assertionResult:assertionResult,request:response.request,response:response.response};
+						requestResponseDetail[requestCounter] = {requestMetaData:metricData,request:response.request,response:response.response,assertionResult:assertionResult};
 						requestCounter++;
 						// request loop ends
 					}
 					// suite loop ends
 				}
-				
 				consoleLog('\nTest Run Summary: \n');
 				Log.PrintSummary(testSummary);
-
+				//Print request detial of request if debug is true and filter is all/fail
 				if (debug && (debug === 'true' || debug === true)){
-					Log.log({label:'Failed Request Test Run Details with Request, Response and Assertion Validations....\n',value:''});
-
+					Log.PrintMessage('Failed Request Test Run Details with Request, Response and Assertion Validations....\n');
 					for(let key in requestResponseDetail){
-						requestResponseDetail[key]['requestMetaData']['requestStatus'] == "Fail" && consoleLog(`Request ${requestResponseDetail[key]['requestMetaData']['count']}\n`,requestResponseDetail[key]);
+						Log.PrintRequestDetail({requestResponseDetail:requestResponseDetail[key], showAll}); // showAll true->all pass and fail. showAll false ->only failed requests.
 					}
 				}
 				iterationCounter++;

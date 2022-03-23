@@ -74,6 +74,29 @@ const PrintSummary = ({ totalRequestCount, passRequestCount, failRequestCount })
 	consoleLog(`Total Requests: ${blueUL(totalRequestCount)}, Pass Requests: ${greenUL(passRequestCount)}, Fail Requests: ${redUL(failRequestCount)}\n`);
 };
 
-let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel, PrintSummary };
+const PrintMessage = (message) => {
+	consoleLog(`${orange(message)}\n`);
+};
+const PrintRequestDetail = ({requestResponseDetail,showAll=false}) =>{
+	try{
+	let {requestMetaData} = requestResponseDetail;
+	requestResponseDetail['requestMetaData'] && delete requestResponseDetail['requestMetaData'];
+
+	
+		if(requestMetaData.requestStatus == 'Fail'){
+			consoleLog(`sno:${redUL(requestMetaData.count)} | suite:${redUL(requestMetaData.suiteName)} | req:${redUL(requestMetaData.requestName)} | req status:${redUL(requestMetaData.requestStatus)}\n`);
+			console.dir(requestResponseDetail,{ depth: 4 });
+		}
+		else if(requestMetaData.requestStatus == 'Pass' && showAll){
+			consoleLog(`sno:${greenUL(requestMetaData.count)} | suite:${greenUL(requestMetaData.suiteName)} | req:${greenUL(requestMetaData.requestName)} | req status:${greenUL(requestMetaData.requestStatus)}\n`);
+			console.dir(requestResponseDetail,{ depth: 4 });
+		}
+	}
+	catch(error){
+		consoleLog('Error occured in printing PrintRequestDetail..', error.message);
+	}
+}
+
+let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel, PrintSummary, PrintMessage, PrintRequestDetail };
 
 module.exports = Log;
