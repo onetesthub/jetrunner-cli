@@ -76,6 +76,9 @@ const Execute = ({ data, iteration, envObj, projectName, debug }) => {
 			let iterationCounter = 1;
 			let testId = new Date().getTime();
 
+			Log.log({ label: 'TestId', value: testId });
+			Log.log({ label: 'Project Name: ', value: projectName });
+
 			while (iterationCounter <= totalIteration) {
 				let requestCounter = 1;
 				
@@ -86,7 +89,6 @@ const Execute = ({ data, iteration, envObj, projectName, debug }) => {
 				}
 				let requestResponseDetail = {};
 				// iteration loop starts
-				Log.log({ label: 'TestId', value: testId });
 				Log.log({ label: 'Itertation', value: iterationCounter });
 				consoleLog('\n');
 				Log.PrintTableLabel();
@@ -151,10 +153,11 @@ const Execute = ({ data, iteration, envObj, projectName, debug }) => {
 					// suite loop ends
 				}
 				
-				consoleLog('\nTest Run Summary: ',testSummary);
-				consoleLog('\n');
+				consoleLog('\nTest Run Summary: \n');
+				Log.PrintSummary(testSummary);
+
 				if (debug && (debug === 'true' || debug === true)){
-					Log.log({label:'Failed Request Test Run Summary with Request, Response and Assertion Validations....\n',value:''});
+					Log.log({label:'Failed Request Test Run Details with Request, Response and Assertion Validations....\n',value:''});
 
 					for(let key in requestResponseDetail){
 						requestResponseDetail[key]['requestMetaData']['requestStatus'] == "Fail" && consoleLog(`Request ${requestResponseDetail[key]['requestMetaData']['count']}\n`,requestResponseDetail[key]);

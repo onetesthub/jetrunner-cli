@@ -3,13 +3,16 @@ const sym = require('log-symbols');
 
 const green = chalk.green;
 const greenI = chalk.green.inverse;
-const red = chalk.red;
+const red = chalk.hex('#ff5d53');
 const redI = chalk.red.bold.inverse;
 const orange = chalk.keyword('orange');
 const orangeI = chalk.keyword('orange').inverse;
 const blue = chalk.blue;
 const blueI = chalk.blue.inverse;
 const primary = chalk.bold.underline.hex('#34D058');
+const greenUL = chalk.bold.underline.hex('#34D058');
+const redUL = chalk.bold.underline.hex('ff5d53');
+const blueUL = chalk.bold.underline.hex('#6187f9f5');
 const consoleLog = console.log;
 console.log = () => undefined;
 
@@ -40,17 +43,17 @@ const Welcome = (projectname) => {
 
 const Pass = ({ count, method, requestName, suiteName, statusCode, elapsedTime, assertionResult }) => {
 	// ✔ | method | suitename | request name | time | status | assert
-	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${green(assertionResult)}`);
+	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${green(assertionResult)}\n`);
 };
 
 const AssertionFail = ({ count, method, suiteName, requestName, statusCode, elapsedTime, assertionResult }) => {
 	// count | method | suite name | request name | time | status | assert
-	consoleLog(`${sym.warning} | ${count ? count : sym.warning} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${red(assertionResult)}`);
+	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${red(assertionResult)}\n`);
 };
 
 const Fail = ({ count, method, suiteName, requestName, statusCode, elapsedTime, assertionResult }) => {
 	// ❌ | method | suite name | request name | time | status | assert
-	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime ? elapsedTime + 'ms' : '-'} | ${red(statusCode)} | -`);
+	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime ? elapsedTime + 'ms' : '-'} | ${red(statusCode)} | -\n`);
 };
 
 const log = ({ label, value }) => {
@@ -63,9 +66,14 @@ const SuiteLabel = (suiteName) => {
 
 const PrintTableLabel = () => {
 	// ❌ | method | suite name | request name | time | status | assert
-	consoleLog(`Sr. no. | method | Suite name | Request name | time taken | status code | Assertion status\n`);
+	consoleLog(`  Sno.| method | Suite name | Request name | time taken | status code | Assertion status\n`);
 };
 
-let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel };
+const PrintSummary = ({ totalRequestCount, passRequestCount, failRequestCount }) => {
+	// count | method | suite name | request name | time | status | assert
+	consoleLog(`Total Requests: ${blueUL(totalRequestCount)}, Pass Requests: ${greenUL(passRequestCount)}, Fail Requests: ${redUL(failRequestCount)}\n`);
+};
+
+let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel, PrintSummary };
 
 module.exports = Log;
