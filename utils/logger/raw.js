@@ -38,19 +38,19 @@ const Welcome = (projectname) => {
 	projectname ? consoleLog(`Project name: ${projectname}`) : '';
 };
 
-const Pass = ({ count, method, name, suiteName, statusCode, time }) => {
+const Pass = ({ count, method, requestName, suiteName, statusCode, elapsedTime, assertionResult }) => {
 	// ✔ | method | suitename | request name | time | status | assert
-	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${name} | ${time + 'ms'} | ${green(statusCode)} | ${green('Assertion Pass')}`);
+	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${green(assertionResult)}`);
 };
 
-const AssertionFail = ({ count, method, suiteName, name, statusCode, time }) => {
+const AssertionFail = ({ count, method, suiteName, requestName, statusCode, elapsedTime, assertionResult }) => {
 	// count | method | suite name | request name | time | status | assert
-	consoleLog(`${sym.warning} | ${count ? count : sym.warning} | ${method.toUpperCase()} | ${suiteName} | ${name} | ${time + 'ms'} | ${green(statusCode)} | ${red('Assertion Fail')}`);
+	consoleLog(`${sym.warning} | ${count ? count : sym.warning} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${red(assertionResult)}`);
 };
 
-const Fail = ({ count, method, suiteName, name, statusCode, time }) => {
+const Fail = ({ count, method, suiteName, requestName, statusCode, elapsedTime, assertionResult }) => {
 	// ❌ | method | suite name | request name | time | status | assert
-	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${name} | ${time ? time + 'ms' : '-'} | ${red(statusCode)} | -`);
+	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime ? elapsedTime + 'ms' : '-'} | ${red(statusCode)} | -`);
 };
 
 const log = ({ label, value }) => {

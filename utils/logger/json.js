@@ -60,7 +60,7 @@ const SuiteLabel = (suiteName) => {
 
 const PrintTableLabel = () => {
 	// ❌ | method | suite name | request name | time | status | assert
-	consoleLog(`Sr. no. | method | Suite name | Request name | time taken | status code | Assertion status\n`);
+	consoleLog(`Sr. no. | method | Suite name | Request name | status code | Response Time (ms)| Assertion status\n`);
 };
 
 let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel };

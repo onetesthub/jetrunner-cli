@@ -13,6 +13,7 @@ require('./utils/update-notifier');
 const chalk = require('chalk');
 const { ValidateToken } = require('./utils/helper');
 const ExecuteProject = require('./utils/index');
+const { consoleLog } = require('./utils/logger');
 
 const input = cli.input;
 const flags = cli.flags;
@@ -25,9 +26,7 @@ const { clear, debug } = flags;
 			cli.showHelp(0);
 		}
 		let ParsedArguments = await parseArguments(flags);
-		if (debug === 'true' || debug === true) {
-			console.log(ParsedArguments);
-		}
+		consoleLog("Project Run Time parameters are: \n", ParsedArguments);
 		ExecuteProject(ParsedArguments);
 	} catch (error) {
 		// todo: log error

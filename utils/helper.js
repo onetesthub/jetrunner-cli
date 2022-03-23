@@ -54,17 +54,17 @@ module.exports = {
 			}
 		});
 	},
-	ValidateToken: (token) => {
+	ValidateToken: (tokenId) => {
 		return new Promise(async (resolve, reject) => {
 			try {
-				if (!token) {
-					throw { type: 'custom', message: 'no token' };
+				if (!tokenId) {
+					throw { type: 'custom', message: 'no tokenId' };
 				}
-				const response = await axios.get(`https://api.jetmanlabs.com/api/validateToken/${token}`);
+				const response = await axios.get(`https://api.jetmanlabs.com/api/validateToken/${tokenId}`);
 				resolve({ tokenId: response.tokenid, clientId: response.userId });
 			} catch (error) {
 				console.log('error :>> ', error);
-				const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error while Validationg token';
+				const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error while Validationg tokenId';
 				reject({ message });
 			}
 		});

@@ -10,7 +10,7 @@ const flags = {
 	},
 	debug: {
 		type: `boolean`,
-		default: false,
+		default: true,
 		// alias: `d`,
 		desc: `Prints parsed arguments`,
 	},
@@ -56,7 +56,7 @@ const flags = {
 		// alias: 'e',
 		desc: 'Active enviroment template, if ot given default env will taken',
 	},
-	token: {
+	tokenId: {
 		type: 'string',
 		// alias: 't',
 		desc: 'Jetman token (to publish data to dashboard)',
