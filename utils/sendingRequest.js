@@ -41,6 +41,15 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				})
 				.catch(function (error) {
+
+					if(!error.response){
+
+						return resolve({
+							status: "error",
+							message :"Error in send request... ",
+						});
+					}
+
 					let endTime = new Date().getTime();
 					error.response.config && delete error.response.config;
 					error.response.request && delete error.response.request;
@@ -56,7 +65,13 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				});
 		} catch (error) {
-			reject();
+			resolve(
+				{
+					status: "error",
+					type:"Error in send request with error: ",
+					message: error
+				}
+			);
 		}
 	});
 };

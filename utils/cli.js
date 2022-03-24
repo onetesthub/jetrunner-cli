@@ -12,18 +12,18 @@ const flags = {
 		type: `boolean`,
 		default: true,
 		// alias: `d`,
-		desc: `Prints parsed arguments`,
+		desc: `Prints parsed arguments, default true to show failed request logs`,
+	},
+	showAll: {
+		type: 'boolean',
+		// alias: 'j',
+		desc: 'Display detailed log data for requests/response, default false (show only failed requests logs. works with --debug',
+		default: false,
 	},
 	publish: {
 		type: 'boolean',
 		// default: false,
 		desc: 'Publish data to dashboard (Jetman dashboard)',
-	},
-	json: {
-		type: 'boolean',
-		// alias: 'j',
-		desc: 'Display log data in JSOn format',
-		// default: false,
 	},
 	delay: {
 		type: 'number',
@@ -34,12 +34,13 @@ const flags = {
 	iteration: {
 		type: 'number',
 		// alias: 'i',
-		desc: 'number of iterations to run',
+		desc: 'number of iterations to run, default 1',
+		default: 1
 	},
 	timeout: {
 		type: 'number',
-		desc: `Request timeout (in ms)`,
-		// default: 30000,
+		desc: `Request timeout (in ms), default 60000 ms`,
+		default: 60000,
 	},
 	project: {
 		type: 'string',

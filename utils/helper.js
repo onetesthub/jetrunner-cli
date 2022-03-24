@@ -2,6 +2,7 @@ const { getInstalledPathSync } = require('get-installed-path');
 const fs = require('fs');
 const pkg = require('./../package.json');
 const axios = require('axios');
+const { consoleLog } = require('./logger');
 
 module.exports = {
 	GetInstallationPath: () => {
@@ -61,12 +62,20 @@ module.exports = {
 					throw { type: 'custom', message: 'no tokenId' };
 				}
 				const response = await axios.get(`https://api.jetmanlabs.com/api/validateToken/${tokenId}`);
-				resolve({ tokenId: response.tokenid, clientId: response.userId });
+				response.data && resolve({ status:response.data.status, tokenId: response.data.tokenid});
+
 			} catch (error) {
-				console.log('error :>> ', error);
-				const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error while Validationg tokenId';
-				reject({ message });
+				const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error while token validation..';
+				resolve({ status: 'error', message });
 			}
 		});
 	},
+	delayms: (value) =>{
+		return new Promise(function(resolve, reject){
+			setTimeout(function(){
+				resolve();
+			},value)
+		}
+		)
+	}
 };
