@@ -1,27 +1,18 @@
 {
-  "profile1": {
-    "projectPath": "",
-    "iteration": 1,
-    "delay": 0,
-    "timeout": 0,
-    "env": "",
-    "tokenId" : ""
-  },
-  
-  "profile2": {
-    "projectPath": "",
-    "iteration": 1,
-    "delay": 0,
-    "env": "",
-    "tokenId" : ""
-  },
-
-  "profile3": {
-    "projectPath": "",
-    "iteration": 1,
-    "delay": 0,
-    "timeout": 0,
-    "env": "",
-    "tokenId" : ""
-  }
+	"profile1": {
+		"project": "test_files",
+		"iteration": 1,
+		"delay": 0,
+		"timeout": 30000,
+		"env": "prod",
+		"token": ""
+	},
+	"profile2": {
+		"project": "test_files",
+		"iteration": 1,
+		"delay": 0,
+		"timeout": 30000,
+		"env": "prod",
+		"token": ""
+	}
 }

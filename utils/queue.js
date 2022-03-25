@@ -1,5 +1,6 @@
 const request = require('request');
-const mktoEndPoint = 'http://localhost:8080';
+const { consoleLog } = require('./logger');
+const mktoEndPoint = 'https://jetmanlabs.com';
 
 module.exports = class Queue {
 	constructor() {
@@ -16,6 +17,10 @@ module.exports = class Queue {
 
 	dequeue() {
 		let data = this.elements.shift();
+		//consoleLog(data);
+		if((typeof data).toLocaleLowerCase() == 'object'){
+			data = JSON.stringify(data);
+		}
 		return new Promise((resolve, reject) => {
 			request(
 				{
@@ -25,10 +30,10 @@ module.exports = class Queue {
 						'content-type': 'application/json',
 					},
 					body: data,
-					json: true,
 				},
 				(error, res, body) => {
 					if (error) {
+						consoleLog('Error in publishing...')
 						resolve(false);
 					}
 					resolve(true);
@@ -42,12 +47,10 @@ module.exports = class Queue {
 	}
 
 	length() {
-		console.log('\nLength of queue is :', this.elements.length);
 		return this.elements.length;
 	}
 
 	print() {
-		console.log('\nYour Queue is :', this.elements);
 		return this.elements;
 	}
 };
