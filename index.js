@@ -43,7 +43,7 @@ const { clear, debug } = flags;
 		ExecuteProject(ParsedArguments);
 	} catch (error) {
 		// todo: log error
-		console.log(error.message);
+		console.log(error);
 		console.log('\nRun ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments\n or read docs for more information ', 'https://jetmanlabs.com/jetmanDoc/#Jetman-CLI');
 		process.exit(1);
 	}

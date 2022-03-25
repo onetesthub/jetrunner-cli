@@ -77,6 +77,10 @@ const PrintSummary = ({ totalRequestCount, passRequestCount, failRequestCount })
 const PrintMessage = (message) => {
 	consoleLog(`${orange(message)}\n`);
 };
+
+const PrintWarning = (message) => {
+	consoleLog(`${red(message)}\n`);
+};
 const PrintRequestDetail = ({requestResponseDetail,showAll=false}) =>{
 	try{
 	let {requestMetaData} = requestResponseDetail;
@@ -97,6 +101,6 @@ const PrintRequestDetail = ({requestResponseDetail,showAll=false}) =>{
 	}
 }
 
-let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel, PrintSummary, PrintMessage, PrintRequestDetail };
+let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel, PrintSummary, PrintMessage, PrintRequestDetail, PrintWarning };
 
 module.exports = Log;
