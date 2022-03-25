@@ -15,8 +15,21 @@ const { ValidateToken } = require('./utils/helper');
 const ExecuteProject = require('./utils/index');
 const { consoleLog } = require('./utils/logger');
 
+const defaultFlags = {
+	clear: false,
+	debug:true,
+	showAll: false,
+	publish: false,
+	timeout: 60000,
+	iteration: 1,
+	tokenId:undefined,
+	delay:0
+}
 const input = cli.input;
-const flags = cli.flags;
+let flags = cli.flags
+//Overwrite default flags with command line args..
+flags = { ...defaultFlags, ...cli.flags };
+
 const { clear, debug } = flags;
 
 (async () => {

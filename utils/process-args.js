@@ -8,10 +8,13 @@ const { consoleLog } = require('./logger');
 const configFileName = `configfile.json`,
 	dbEntryPoint = `metaInfo.db`;
 
+
+
 module.exports = (args = {}) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let cliArguments = { ...args };
+			//consoleLog('2->',cliArguments);
 			const dirOfExecution = process.cwd();
 			let projectPath, profileData;
 			const configFilePath = cliArguments.configFile || path.join(dirOfExecution, configFileName);
@@ -30,10 +33,9 @@ module.exports = (args = {}) => {
 						throw { type: 'custom', message: 'Please specify profile using --profile <profile name>' };
 					}
 				}
-				//consoleLog('profileData->',profileData)
-				//consoleLog('cliArguments->',cliArguments);
-				cliArguments = { ...profileData, ...cliArguments };
-				//consoleLog('cliArguments-mod->',cliArguments);
+				cliArguments = { ...profileData, ...args };
+				cliArguments.profile && delete cliArguments['profile'];
+
 				if (!cliArguments.project || !(await FolderExists(cliArguments.project)) || !(await FileExists(path.join(cliArguments.project, dbEntryPoint)))) {
 					throw { type: 'custom', message: chalk.red('No project found') + ', please specify project path using --project <project path> or run this command from project directory\n Run jetrunner-cli --help for options\n' };
 				}

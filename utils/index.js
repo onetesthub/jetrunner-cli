@@ -1,5 +1,5 @@
 const { SuiteData } = require('jetRunner');
-const { ValidateToken , delayms} = require('./helper');
+const { ValidateToken, delayms } = require('./helper');
 //
 const assert = require('chai').assert;
 const { sendRequest: Send } = require('./sendingRequest');
@@ -9,7 +9,6 @@ const Queue = require('./queue.js');
 
 const publish = new Queue();
 
-
 // check logger by user, default to raw
 let Log;
 //configArgments
@@ -17,7 +16,7 @@ let dynamicEnv = {};
 module.exports = ExecuteProject = (configArgments) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const { project, env} = configArgments;
+			let { project, env } = configArgments;
 			const loggerType = 'raw';
 			Log = GetLogger(loggerType);
 			if (!project) {
@@ -32,16 +31,28 @@ module.exports = ExecuteProject = (configArgments) => {
 			// Declaring empty object to store envinment variables
 			let selectedEnvObj = {};
 			// if user enter env flag then fetch environment variables
-			if (env) {
-				let envDbResponse = await suiteData.getAllEnvironments();
-				if (envDbResponse.status == 'success' && envDbResponse.message == 'Data fetched') {
-					envDbResponse.data.forEach((envObj) => {
-						if (envObj.envName == env) {
+
+			let envDbResponse = await suiteData.getAllEnvironments();
+
+			//consoleLog('envDbResponse->', envDbResponse);
+			!env && consoleLog('Note: No env passed, Findings if any active env as selected in Jetman app..');
+			
+			if (envDbResponse.status == 'success' && envDbResponse.message == 'Data fetched') {
+				envDbResponse.data.forEach((envObj) => {
+					if (env && envObj.envName == env) {
+						selectedEnvObj = envObj.data;
+						return;
+					} else {
+						if (envObj.isactive == true) {
+							env = envObj.envName;
 							selectedEnvObj = envObj.data;
+							return;
 						}
-					});
-				}
+					}
+				});
 			}
+			consoleLog('\nEnv name is: ', env);
+			consoleLog('Fteched Env params are: ',selectedEnvObj);
 			// getting all root level suites
 			let getAllRootSuites = await suiteData.getAllRootSuites();
 			if (getAllRootSuites.status !== 'success') {
@@ -62,17 +73,17 @@ module.exports = ExecuteProject = (configArgments) => {
 				let suiteRequests = await suiteData.getNestedSortedRequests([suite._id]);
 				data[suite.suiteName] = suiteRequests;
 			}
-			let execAgrumentsObj = Object.assign(configArgments,{ data, envObj: selectedEnvObj, projectName})
+			let execAgrumentsObj = Object.assign(configArgments, { data, envObj: selectedEnvObj, projectName });
 			let statusData = await Execute(execAgrumentsObj);
 			resolve(statusData);
 		} catch (error) {
-			consoleLog('Error: ', error)
-			reject({status:"error", message: error.message|| "Unexpected error in processing requests"});
+			consoleLog('Error: ', error);
+			reject({ status: 'error', message: error.message || 'Unexpected error in processing requests' });
 		}
 	});
 };
 
-const Execute = ({ data, iteration, envObj, projectName, debug, showAll,timeout, delay, tokenId }) => {
+const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout, delay, tokenId }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let totalIteration = iteration || 1;
@@ -84,21 +95,20 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll,timeout,
 
 			//Add logic to validate token and send metricData to queue for publish
 			const tokenStatus = tokenId && (await ValidateToken(tokenId));
-			if(tokenStatus.status == 'success'){
+			if (tokenStatus && tokenStatus.status == 'success') {
 				tokenId = tokenStatus.tokenId;
-			} 
-			else{
+			} else {
 				tokenId = undefined;
-				consoleLog('\nNote: tokenId is Invalid, Setting token to ',tokenId);
+				consoleLog('\nNote: tokenId is Invalid, Setting token to ', tokenId);
 			}
 			while (iterationCounter <= totalIteration) {
 				let requestCounter = 1;
-				
+
 				let testSummary = {
-					totalRequestCount:0,
-					passRequestCount:0,
-					failRequestCount:0
-				}
+					totalRequestCount: 0,
+					passRequestCount: 0,
+					failRequestCount: 0,
+				};
 				let requestResponseDetail = {};
 				// iteration loop starts
 				Log.log({ label: 'Itertation', value: iterationCounter });
@@ -111,9 +121,9 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll,timeout,
 						// request loop starts (request on 1 suite)
 						let timeStamp = new Date().getTime();
 						let parsedRequest = extractVariables(request, envObj, dynamicEnv);
-						let { response, assertionResult } = await sendReq_Validate(parsedRequest.req,timeout);
+						let { response, assertionResult } = await sendReq_Validate(parsedRequest.req, timeout);
 
-						delay && await delayms(delay);
+						delay && (await delayms(delay));
 
 						const metricData = {
 							testId: testId,
@@ -128,45 +138,43 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll,timeout,
 							count: requestCounter,
 							iteration: iterationCounter,
 							timeStamp: timeStamp,
-							assertionResult: assertionResult.status
+							assertionResult: assertionResult.status,
 						};
 
 						//check if any assertion fails, fail the request.
-						if((assertionResult.status).toLowerCase().includes('fail') && assertionResult.errorMessage){
-							metricData['assertionFailureReason']= assertionResult.errorMessage;
+						if (assertionResult.status.toLowerCase().includes('fail') && assertionResult.errorMessage) {
+							metricData['assertionFailureReason'] = assertionResult.errorMessage;
 							//metricData['assertionFailureDetails'] = assertionResult.assertionFailureDetails;
-							metricData['requestStatus'] = "Fail";
+							metricData['requestStatus'] = 'Fail';
 							Log.AssertionFail(metricData);
-							testSummary.failRequestCount = testSummary.failRequestCount +1;
-							
+							testSummary.failRequestCount = testSummary.failRequestCount + 1;
 						}
 						//check if any assertion passes, pass the request.
-						else if((assertionResult.status).toLowerCase().includes('pass')){
-							metricData['requestStatus'] = "Pass";
+						else if (assertionResult.status.toLowerCase().includes('pass')) {
+							metricData['requestStatus'] = 'Pass';
 							Log.Pass(metricData);
-							testSummary.passRequestCount = testSummary.passRequestCount +1;
+							testSummary.passRequestCount = testSummary.passRequestCount + 1;
 						}
 						//if assertion status is null
-						else{
-							if(metricData.statusCode >= 200 && metricData.statusCode <= 304){
-								metricData['requestStatus'] = "Pass";
+						else {
+							if (metricData.statusCode >= 200 && metricData.statusCode <= 304) {
+								metricData['requestStatus'] = 'Pass';
 								Log.Pass(metricData);
-								testSummary.passRequestCount = testSummary.passRequestCount +1;
-							}
-							else{
-								metricData['requestStatus'] = "Fail";
+								testSummary.passRequestCount = testSummary.passRequestCount + 1;
+							} else {
+								metricData['requestStatus'] = 'Fail';
 								Log.Fail(metricData);
-								testSummary.failRequestCount = testSummary.failRequestCount +1;
+								testSummary.failRequestCount = testSummary.failRequestCount + 1;
 							}
 						}
-						testSummary.totalRequestCount = testSummary.totalRequestCount +1;
-						requestResponseDetail[requestCounter] = {requestMetaData:metricData,request:response.request,response:response.response,assertionResult:assertionResult};
+						testSummary.totalRequestCount = testSummary.totalRequestCount + 1;
+						requestResponseDetail[requestCounter] = { requestMetaData: metricData, request: response.request, response: response.response, assertionResult: assertionResult };
 
-					//Publish to queue if token is valid
-					if(tokenId && publish && metricData){
-						metricData.tokenId = tokenId;
-						 publish.enqueue(metricData);
-					} 
+						//Publish to queue if token is valid
+						if (tokenId && publish && metricData) {
+							metricData.tokenId = tokenId;
+							publish.enqueue(metricData);
+						}
 
 						requestCounter++;
 						// request loop ends
@@ -176,40 +184,39 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll,timeout,
 				consoleLog('\nTest Run Summary: \n');
 				Log.PrintSummary(testSummary);
 				//Print request detial of request if debug is true and filter is all/fail
-				if (debug && (debug === 'true' || debug === true)){
+				if (debug && (debug === 'true' || debug === true)) {
 					Log.PrintMessage('Failed Request Test Run Details with Request, Response and Assertion Validations....');
-					for(let key in requestResponseDetail){
-						Log.PrintRequestDetail({requestResponseDetail:requestResponseDetail[key], showAll}); // showAll true->all pass and fail. showAll false ->only failed requests.
+					for (let key in requestResponseDetail) {
+						Log.PrintRequestDetail({ requestResponseDetail: requestResponseDetail[key], showAll }); // showAll true->all pass and fail. showAll false ->only failed requests.
 					}
 				}
 
 				iterationCounter++;
 				// iteration loop ends
 			}
-			if(tokenId && publish){ 
-				let handle = setInterval(function(){
-					consoleLog('Checking publish queue length ', publish.length())
-					if(publish.isEmpty()){
+			if (tokenId && publish) {
+				let handle = setInterval(function () {
+					consoleLog('Checking publish queue length ', publish.length());
+					if (publish.isEmpty()) {
 						clearInterval(handle);
 						consoleLog('Completed publishing all metrics..');
-						resolve({status:"success"});
+						resolve({ status: 'success' });
 					}
-				},1000)
-			}
-			else{
-			resolve({status:"success"});
+				}, 1000);
+			} else {
+				resolve({ status: 'success' });
 			}
 		} catch (error) {
-			reject({status:"error", message: error || "Unexpected error in processing requests"});
+			reject({ status: 'error', message: error || 'Unexpected error in processing requests' });
 		}
 	});
 };
 
-const sendReq_Validate = (request,timeout) => {
+const sendReq_Validate = (request, timeout) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			//consoleLog('request.reqObj->', request.reqObj);
-			let response = await Send(request.reqObj,timeout);
+			let response = await Send(request.reqObj, timeout);
 			//consoleLog('response->', response);
 			//Evaluate assertion if exist
 			let assertionResult = await CheckAssertion({ assertionText: request.reqObj.assertText, request, response });
@@ -237,7 +244,7 @@ const CheckAssertion = ({ assertionText, request, response }) => {
 			status: '',
 			errorType: undefined,
 			errorMessage: undefined,
-			errorDetails : []
+			errorDetails: [],
 		};
 		try {
 			if (assertionText && (typeof assertionText).toLowerCase() !== 'string') {
@@ -249,17 +256,21 @@ const CheckAssertion = ({ assertionText, request, response }) => {
 				const assertions = assertionText.split('\n');
 				for (const assertion of assertions) {
 					try {
-							eval(assertion);
-							assertionResult.status = 'testPassed' //keeping it testPassed so that current dashboard can work. Later change to Assertion Pass, Assertion Pass here and in App Runner, Mkto
-							//save result of assert statements in array of object
+						eval(assertion);
+						assertionResult.status = 'testPassed'; //keeping it testPassed so that current dashboard can work. Later change to Assertion Pass, Assertion Pass here and in App Runner, Mkto
+						//save result of assert statements in array of object
 					} catch (error) {
 						let errObj = {
-							assertText : assertion, failureReason: error.message, actual: error.actual, expected: error.expected, operator:error.operator
+							assertText: assertion,
+							failureReason: error.message,
+							actual: error.actual,
+							expected: error.expected,
+							operator: error.operator,
 						};
 						assertionResult.errorDetails.push(errObj);
-						assertionResult.status = 'testFailed';  //keeping it testFailed so that current dashboard can work. Later change to Assertion Pass, Assertion Fail here and in App Runner, Mkto
+						assertionResult.status = 'testFailed'; //keeping it testFailed so that current dashboard can work. Later change to Assertion Pass, Assertion Fail here and in App Runner, Mkto
 						assertionResult.errorType = 'assertion_validations_failed';
-						assertionResult.errorMessage = assertionResult.errorMessage? assertionResult.errorMessage +'\n' + error.message:error.message;
+						assertionResult.errorMessage = assertionResult.errorMessage ? assertionResult.errorMessage + '\n' + error.message : error.message;
 					}
 				}
 			}
