@@ -6,6 +6,7 @@ const { sendRequest: Send } = require('./sendingRequest');
 const { consoleLog, GetLogger } = require('./logger/index');
 const { extractVariables } = require('./environment');
 const Queue = require('./queue.js');
+const { PrintWarning } = require('./logger/raw');
 
 const publish = new Queue();
 
@@ -35,7 +36,9 @@ module.exports = ExecuteProject = (configArgments) => {
 			let envDbResponse = await suiteData.getAllEnvironments();
 
 			//consoleLog('envDbResponse->', envDbResponse);
-			!env && consoleLog('Note: No env passed, Findings if any active env as selected in Jetman app..');
+			!env && consoleLog('Note: No env passed, Findings if any active env was selected in Jetman app..');
+
+			let activeEnv, activeEnvObj;
 			
 			if (envDbResponse.status == 'success' && envDbResponse.message == 'Data fetched') {
 				envDbResponse.data.forEach((envObj) => {
@@ -44,15 +47,19 @@ module.exports = ExecuteProject = (configArgments) => {
 						return;
 					} else {
 						if (envObj.isactive == true) {
-							env = envObj.envName;
-							selectedEnvObj = envObj.data;
-							return;
+							activeEnv = envObj.envName;
+							activeEnvObj = envObj.data;
 						}
 					}
 				});
 			}
+			if(!env && activeEnv && activeEnvObj){
+				env = activeEnv;
+				selectedEnvObj = activeEnvObj;
+			}
 			consoleLog('\nEnv name is: ', env);
-			consoleLog('Fteched Env params are: ',selectedEnvObj);
+
+			!(Object.keys(selectedEnvObj).length==0) ? consoleLog('Fetched Env params are: ',selectedEnvObj): PrintWarning('No parameters found in env object ... This could cause test to fail, please review env name.')
 			// getting all root level suites
 			let getAllRootSuites = await suiteData.getAllRootSuites();
 			if (getAllRootSuites.status !== 'success') {
@@ -77,7 +84,7 @@ module.exports = ExecuteProject = (configArgments) => {
 			let statusData = await Execute(execAgrumentsObj);
 			resolve(statusData);
 		} catch (error) {
-			consoleLog('Error: ', error);
+			//consoleLog('Error: ', error);
 			reject({ status: 'error', message: error.message || 'Unexpected error in processing requests' });
 		}
 	});
@@ -175,7 +182,6 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout
 							metricData.tokenId = tokenId;
 							publish.enqueue(metricData);
 						}
-
 						requestCounter++;
 						// request loop ends
 					}
@@ -217,7 +223,7 @@ const sendReq_Validate = (request, timeout) => {
 		try {
 			//consoleLog('request.reqObj->', request.reqObj);
 			let response = await Send(request.reqObj, timeout);
-			//consoleLog('response->', response);
+			consoleLog('response->', response);
 			//Evaluate assertion if exist
 			let assertionResult = await CheckAssertion({ assertionText: request.reqObj.assertText, request, response });
 
@@ -226,12 +232,7 @@ const sendReq_Validate = (request, timeout) => {
 
 			resolve({ response, assertionResult });
 		} catch (error) {
-			let massage = {
-				status: 'error',
-				type: 'unexpected_sendReq_process_error',
-				message: 'Error: ' + error,
-			};
-			reject(massage);
+			reject(error);
 		}
 	});
 };
@@ -276,9 +277,10 @@ const CheckAssertion = ({ assertionText, request, response }) => {
 			}
 			resolve(assertionResult);
 		} catch (error) {
-			assertionResult.status = 'testFailed'; //keeping it testFailed so that current dashboard can work. Later change to Assertion Pass, Assertion Fail here and in App Runner, Mkto
+			assertionResult.status = 'error'; //keeping it testFailed so that current dashboard can work. Later change to Assertion Pass, Assertion Fail here and in App Runner, Mkto
 			assertionResult.errorType = 'unexpected_assertion_process_error';
 			assertionResult.errorMessage = error;
+			assertionResult.message= error,
 			resolve(assertionResult);
 		}
 	});
@@ -296,8 +298,8 @@ const ExtractDynamicVariables = ({ extractorText, response, request }) => {
 			resolve();
 		} catch (error) {
 			console.log('error :>> ', error);
-			const message = error && error.type == 'custom' ? error.message : 'Unexpected error';
-			reject({ message });
+			error && error.message ? message = error.message : 'Unexpected error';
+			reject({ status: "error", message });
 		}
 	});
 };

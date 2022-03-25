@@ -41,12 +41,12 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				})
 				.catch(function (error) {
-
+					consoleLog('Error occured in Request object->');
+					console.dir(axiosObject,{ depth: 4 })
 					if(!error.response){
-
-						return resolve({
+						return reject({
 							status: "error",
-							message :"Error in send request... ",
+							message :"Error in send request having error " + error
 						});
 					}
 
@@ -65,11 +65,10 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				});
 		} catch (error) {
-			resolve(
+			reject(
 				{
 					status: "error",
-					type:"Error in send request with error: ",
-					message: error
+					message: "Error in send request with having error " + error
 				}
 			);
 		}
