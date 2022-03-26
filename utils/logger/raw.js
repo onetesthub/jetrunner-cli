@@ -88,11 +88,11 @@ const PrintRequestDetail = ({requestResponseDetail,showAll=false}) =>{
 
 	
 		if(requestMetaData.requestStatus == 'Fail'){
-			consoleLog(`sno:${redUL(requestMetaData.count)} | suite:${redUL(requestMetaData.suiteName)} | req:${redUL(requestMetaData.requestName)} | req status:${redUL(requestMetaData.requestStatus)}\n`);
+			consoleLog(`sno:${redUL(requestMetaData.count)} | suite:${redUL(requestMetaData.suiteName)} | req:${redUL(requestMetaData.requestName)}| StatusCode:${redUL(requestMetaData.statusCode)} | Assertion status:${redUL(requestMetaData.assertionResult)} | req status:${redUL(requestMetaData.requestStatus)}\n`);
 			console.dir(requestResponseDetail,{ depth: 4 });
 		}
 		else if(requestMetaData.requestStatus == 'Pass' && showAll){
-			consoleLog(`sno:${greenUL(requestMetaData.count)} | suite:${greenUL(requestMetaData.suiteName)} | req:${greenUL(requestMetaData.requestName)} | req status:${greenUL(requestMetaData.requestStatus)}\n`);
+			consoleLog(`sno:${greenUL(requestMetaData.count)} | suite:${greenUL(requestMetaData.suiteName)} | req:${greenUL(requestMetaData.requestName)} | StatusCode:${greenUL(requestMetaData.statusCode)} |Assertion status:${greenUL(requestMetaData.assertionResult)} | req status:${greenUL(requestMetaData.requestStatus)}\n`);
 			console.dir(requestResponseDetail,{ depth: 4 });
 		}
 	}
