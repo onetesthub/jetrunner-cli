@@ -43,12 +43,12 @@ const Welcome = (projectname) => {
 
 const Pass = ({ count, method, requestName, suiteName, statusCode, elapsedTime, assertionResult }) => {
 	// ✔ | method | suitename | request name | time | status | assert
-	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${green(assertionResult)}\n`);
+	consoleLog(`${sym.success} | ${count} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${orange(elapsedTime + ' ms')} | ${green(statusCode)} | ${green(assertionResult)}\n`);
 };
 
 const AssertionFail = ({ count, method, suiteName, requestName, statusCode, elapsedTime, assertionResult }) => {
 	// count | method | suite name | request name | time | status | assert
-	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${elapsedTime + 'ms'} | ${green(statusCode)} | ${red(assertionResult)}\n`);
+	consoleLog(`${sym.error} | ${count ? count : sym.error} | ${method.toUpperCase()} | ${suiteName} | ${requestName} | ${orange(elapsedTime + ' ms')} | ${green(statusCode)} | ${red(assertionResult)}\n`);
 };
 
 const Fail = ({ count, method, suiteName, requestName, statusCode, elapsedTime, assertionResult }) => {
