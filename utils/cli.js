@@ -3,20 +3,19 @@ const Table = require('cli-table3');
 
 const flags = {
 	clear: {
-		type: 'boolean',
+		type: 'string',
 		desc: `Clear the console, default false`,
 	},
 	debug: {
-		type: 'boolean',
-		default: true,
+		type: 'string',
 		desc: `Prints parsed arguments, default true to show failed request logs, default true`,
 	},
 	showAll: {
-		type: 'boolean',
+		type: 'string',
 		desc: 'Display detailed log data for requests/response, default false. (show only failed requests logs. works with --debug',
 	},
 	publish: {
-		type: 'boolean',
+		type: 'string',
 		desc: 'Publish data to dashboard (Jetman dashboard)',
 	},
 	delay: {

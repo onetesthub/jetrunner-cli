@@ -8,7 +8,7 @@ const { extractVariables } = require('./environment');
 const Queue = require('./queue.js');
 const { PrintWarning } = require('./logger/raw');
 
-const publish = new Queue();
+const queue = new Queue();
 
 // check logger by user, default to raw
 let Log;
@@ -81,6 +81,7 @@ module.exports = ExecuteProject = (configArgments) => {
 				data[suite.suiteName] = suiteRequests;
 			}
 			let execAgrumentsObj = Object.assign(configArgments, { data, envObj: selectedEnvObj, projectName });
+			//consoleLog('execAgrumentsObj->',execAgrumentsObj);
 			let statusData = await Execute(execAgrumentsObj);
 			resolve(statusData);
 		} catch (error) {
@@ -90,7 +91,7 @@ module.exports = ExecuteProject = (configArgments) => {
 	});
 };
 
-const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout, delay, tokenId }) => {
+const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout, delay, tokenId, publish }) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let totalIteration = iteration || 1;
@@ -180,7 +181,7 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout
 						//Publish to queue if token is valid
 						if (tokenId && publish && metricData) {
 							metricData.tokenId = tokenId;
-							publish.enqueue(metricData);
+							queue.enqueue(metricData);
 						}
 						requestCounter++;
 						// request loop ends
@@ -196,14 +197,13 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout
 						Log.PrintRequestDetail({ requestResponseDetail: requestResponseDetail[key], showAll }); // showAll true->all pass and fail. showAll false ->only failed requests.
 					}
 				}
-
 				iterationCounter++;
 				// iteration loop ends
 			}
 			if (tokenId && publish) {
 				let handle = setInterval(function () {
-					consoleLog('Checking publish queue length ', publish.length());
-					if (publish.isEmpty()) {
+					consoleLog('Checking publish queue length ', queue.length());
+					if (queue.isEmpty()) {
 						clearInterval(handle);
 						consoleLog('Completed publishing all metrics..');
 						resolve({ status: 'success' });
@@ -223,7 +223,6 @@ const sendReq_Validate = (request, timeout) => {
 		try {
 			//consoleLog('request.reqObj->', request.reqObj);
 			let response = await Send(request.reqObj, timeout);
-			consoleLog('response->', response);
 			//Evaluate assertion if exist
 			let assertionResult = await CheckAssertion({ assertionText: request.reqObj.assertText, request, response });
 

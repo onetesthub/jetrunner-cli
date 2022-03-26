@@ -41,8 +41,8 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				})
 				.catch(function (error) {
-					consoleLog('Error occured in Request object->');
-					console.dir(axiosObject,{ depth: 4 })
+					//consoleLog('Error occured in Request object->');
+					//console.dir(axiosObject.url,{ depth: 4 })
 					if(!error.response){
 						return reject({
 							status: "error",

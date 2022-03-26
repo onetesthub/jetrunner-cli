@@ -33,8 +33,10 @@ module.exports = (args = {}) => {
 						throw { type: 'custom', message: 'Please specify profile using --profile <profile name>' };
 					}
 				}
-				cliArguments = { ...profileData, ...args };
+				cliArguments = Object.assign(profileData, args);
+				/*
 				cliArguments.profile && delete cliArguments['profile'];
+				*/
 
 				if (!cliArguments.project || !(await FolderExists(cliArguments.project)) || !(await FileExists(path.join(cliArguments.project, dbEntryPoint)))) {
 					throw { type: 'custom', message: chalk.red('No project found') + ', please specify project path using --project <project path> or run this command from project directory\n Run jetrunner-cli --help for options\n' };
