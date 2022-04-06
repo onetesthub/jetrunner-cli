@@ -39,7 +39,7 @@ module.exports = (args = {}) => {
 				*/
 
 				if (!cliArguments.project || !(await FolderExists(cliArguments.project)) || !(await FileExists(path.join(cliArguments.project, dbEntryPoint)))) {
-					throw { type: 'custom', message: chalk.red('No project found') + ', please specify project path using --project <project path> or run this command from project directory\n Run jetrunner-cli --help for options\n' };
+					throw { type: 'custom', message: chalk.red('No project found ') + ',please specify project path using --project <project path> or run this command from project directory\n Run jetrunner-cli --help for options\n' };
 				}
 			} catch (error) {
 				const message = error && error.type && error.type == 'custom' ? error.message : ' while loading config file';

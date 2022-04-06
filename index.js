@@ -55,8 +55,8 @@ let flags = cli.flags;
 		ExecuteProject(ParsedArguments);
 	} catch (error) {
 		// todo: log error
-		console.log(error);
-		console.log('\nRun ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments\n or read docs for more information ', 'https://jetmanlabs.com/jetmanDoc/#Jetman-CLI');
+		consoleLog('\n',error.message);
+		consoleLog('\n Run ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments or read docs for more information ', 'https://jetmanlabs.com/jetmanDoc/#Jetman-CLI\n');
 		process.exit(1);
 	}
 })();

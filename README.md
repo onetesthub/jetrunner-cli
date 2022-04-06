@@ -1,8 +1,8 @@
-# Jetman CLI
+# Jetrunner CLI
 
-#### Jetman is a command line interface. It allows you to run all the suites and fetching the response directly from the command line.
+#### Jetrunner is a command line interface. It allows you to run all the suites and fetching the response directly from the command line.
 
-#### Jetman resides in the NPM registry and on Github.
+#### Jetrunner resides in the NPM registry and on Github.
 
 ## Links
 - **[Documentation](https://jetmanlabs.com/maindoc.html#download_and_installation)**
@@ -20,11 +20,11 @@
 
 ## Getting Started ##
 
-Jetman is built on Node.js, To run jetman make sure you have Node.js installed on your system.
+Jetrunner is built on Node.js, To run Jetrunner make sure you have Node.js installed on your system.
 
 You can download and install Node.js on Linux, Windows and MacOS.
 
-After you install Node.js jetman is just command away. Install Jetman-CLI module from npm globally on your system, which allow you to run it from anywhere.
+After you install Node.js Jetrunner is just command away. Install Jetrunner-CLI module from npm globally on your system, which allow you to run it from anywhere.
 
 > $ npm install -g jetrunner-cli
 
@@ -43,11 +43,11 @@ Each profile further contains the JSON object, where we can pass multiple key va
 
 Click <a href="https://jetmanlabs.com/maindoc.html#runnercli_gettingStarted" download>here</a> to download configfile.json. After downloading just move that file to location where you feel comfortable to access it later from command line and replace the default values as per your need.
 
-In jetman cli we can pass diffrent flag like environment, iteration, delay, profile and lot more. We'll discuss these flags later.
+In Jetrunner cli we can pass diffrent flag like environment, iteration, delay, profile and lot more. We'll discuss these flags later.
 
 # Options #
 
-Jetman CLI provides a rich set of options to customize a run. You can retrieve a list of options by running it with the **-h || --help** flag.
+Jetrunner CLI provides a rich set of options to customize a run. You can retrieve a list of options by running it with the **-h || --help** flag.
 
 > $ jetrunner-cli --configfile "/path/of/configfile.json" --profile "profilename"
 
