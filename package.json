@@ -1,13 +1,10 @@
 {
 	"name": "jetrunner-cli",
-	"version": "2.0.0",
+	"version": "3.0.0",
 	"description": "CLI client to run Jetman projects",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index",
-		"start-profile": "node index --profile profile1",
-		"start-cofig": "node index --configFile configfile.json",
-		"start-project": "node index --project test_files",
 		"help": "node index help",
 		"format": "prettier --write ."
 	},
@@ -20,7 +17,7 @@
 		"type": "git",
 		"url": "git+https://github.com/onetesthub/jetrunner-cli.git"
 	},
-	"license": "ONETESTUB",
+	"license": "jetmanlabs.com",
 	"bin": {
 		"Jetman-cli": "index.js",
 		"jetman-cli": "index.js"
@@ -36,7 +33,8 @@
 		"Jetmanlabs",
 		"rest",
 		"api",
-		"testing"
+		"testing",
+		"jetrunner-cli"
 	],
 	"bugs": {
 		"url": "https://github.com/onetesthub/tracking/issues"
