@@ -2,6 +2,38 @@ const meow = require('meow');
 const Table = require('cli-table3');
 
 const flags = {
+	project: {
+		type: 'string',
+		desc: `Full absolute path of project to run. Relative path is not recommended.`,
+	},
+	delay: {
+		type: 'number',
+		desc: `Delay (in ms)`,
+	},
+	iteration: {
+		type: 'number',
+		desc: 'number of iterations to run, default 1',
+	},
+	timeout: {
+		type: 'number',
+		desc: `Request timeout (in ms), default 60000 ms`,
+	},
+	configFile: {
+		type: 'string',
+		desc: 'path of a Jetman configuration file',
+	},
+	env: {
+		type: 'string',
+		desc: 'Active enviroment template, if ot given default env will taken',
+	},
+	tokenId: {
+		type: 'string',
+		desc: 'Jetman token (to publish data to dashboard). Not supported at the moment.',
+	},
+	profile: {
+		type: 'string',
+		desc: 'Profile name from config file. This option works with config file having multiple profiles.',
+	},
 	clear: {
 		type: 'string',
 		desc: `Clear the console, default false`,
@@ -16,40 +48,8 @@ const flags = {
 	},
 	publish: {
 		type: 'string',
-		desc: 'Publish data to dashboard (Jetman dashboard)',
-	},
-	delay: {
-		type: 'number',
-		desc: `Delay (in ms)`,
-	},
-	iteration: {
-		type: 'number',
-		desc: 'number of iterations to run, default 1',
-	},
-	timeout: {
-		type: 'number',
-		desc: `Request timeout (in ms), default 60000 ms`,
-	},
-	project: {
-		type: 'string',
-		desc: `Path of project to run`,
-	},
-	configFile: {
-		type: 'string',
-		desc: 'path of a Jetman configuration file',
-	},
-	env: {
-		type: 'string',
-		desc: 'Active enviroment template, if ot given default env will taken',
-	},
-	tokenId: {
-		type: 'string',
-		desc: 'Jetman token (to publish data to dashboard)',
-	},
-	profile: {
-		type: 'string',
-		desc: 'Profile name from config file',
-	},
+		desc: 'Publish data to dashboard (Jetman dashboard). This feature is not supported yet.',
+	}
 };
 
 let helpText = `Usage: Jetrunner-cli [options]

@@ -16,7 +16,7 @@ module.exports = (args = {}) => {
 			let cliArguments = { ...args };
 			//consoleLog('2->',cliArguments);
 			const dirOfExecution = process.cwd();
-			let projectPath, profileData;
+			let projectPath, profileData={};
 			const configFilePath = cliArguments.configFile || path.join(dirOfExecution, configFileName);
 			try {
 				if (await FileExists(configFilePath)) {
@@ -30,25 +30,30 @@ module.exports = (args = {}) => {
 							throw { type: 'custom', message: `Selected profile doesn't exists` };
 						}
 					} else if(!cliArguments.project) {
-						throw { type: 'custom', message: 'Please specify profile using --profile <profile name>' };
+						throw { type: 'custom', message: 'Please specify profile using --profile <profile name>. Refer your config file.' };
 					}
+					cliArguments = Object.assign(profileData, args);
+					resolve(cliArguments);
 				}
-				cliArguments = Object.assign(profileData, args);
 				/*
 				cliArguments.profile && delete cliArguments['profile'];
 				*/
+				if(await FileExists(path.join(dirOfExecution, dbEntryPoint)) && !cliArguments.project){
+					cliArguments.project = dirOfExecution;
+				}
 
-				if (!cliArguments.project || !(await FolderExists(cliArguments.project)) || !(await FileExists(path.join(cliArguments.project, dbEntryPoint)))) {
-					throw { type: 'custom', message: chalk.red('No project found ') + ',please specify project path using --project <project path> or run this command from project directory\n Run jetrunner-cli --help for options\n' };
+				consoleLog(!cliArguments.project, !(await FolderExists(cliArguments.project)), !(await FileExists(path.join(dirOfExecution, dbEntryPoint))));
+				if (!cliArguments.project && !(await FolderExists(cliArguments.project)) && !(await FileExists(path.join(dirOfExecution, dbEntryPoint)))) {
+					reject( {status:'error', type: 'custom', message: chalk.red('Error: No project found ') + ',please specify full absolute project path using --project <project path> or run this command from project directory.\n' });
 				}
 			} catch (error) {
 				const message = error && error.type && error.type == 'custom' ? error.message : ' while loading config file';
-				reject({ message: chalk.red('Error: ') + message });
+				reject({ status:'error', message: chalk.red('Error: ') + message });
 			}
 			resolve(cliArguments);
 		} catch (error) {
 			const message = error && error.type && error.type == 'custom' ? error.message : 'Unexpected error.';
-			reject({ message });
+			reject({ status:'error', message });
 		}
 	});
 };

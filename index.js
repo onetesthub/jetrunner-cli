@@ -50,13 +50,14 @@ let flags = cli.flags;
 		//consoleLog('defaultFlags->', defaultFlags);
 		//consoleLog('cli flags : \n', cli.flags);
 		let ParsedArguments = await parseArguments(cli.flags);
+		consoleLog('--->',ParsedArguments);
 		ParsedArguments = Object.assign(defaultFlags, ParsedArguments, cli.flags);
 		consoleLog("Project Run Time parameters are: \n", ParsedArguments);
 		ExecuteProject(ParsedArguments);
 	} catch (error) {
 		// todo: log error
 		consoleLog('\n',error.message);
-		consoleLog('\n Run ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments or read docs for more information ', 'https://jetmanlabs.com/jetmanDoc/#Jetman-CLI\n');
+		consoleLog(' Run ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments or read docs for more information ', 'https://jetmanlabs.com/jetmanDoc/#Jetman-CLI\n');
 		process.exit(1);
 	}
 })();

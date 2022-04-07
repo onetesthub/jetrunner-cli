@@ -36,7 +36,7 @@ module.exports = {
 				return resolve(true);
 			} catch (error) {
 				const message = error && error.message ? error.message : `Unexpected error while validating folder path`;
-				reject({ message });
+				return resolve(false)
 			}
 		});
 	},
