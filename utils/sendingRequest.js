@@ -44,9 +44,9 @@ const sendRequest = (reqObject, timeout) => {
 					//consoleLog('Error occured in Request object->');
 					//console.dir(axiosObject.url,{ depth: 4 })
 					if(!error.response){
-						return reject({
+						return resolve({
 							status: "error",
-							message :"Error in send request having error " + error
+							message: `Error in send request with url: ${reqObject.url}`
 						});
 					}
 
@@ -65,7 +65,7 @@ const sendRequest = (reqObject, timeout) => {
 					});
 				});
 		} catch (error) {
-			reject(
+			resolve(
 				{
 					status: "error",
 					message: "Error in send request with having error " + error
