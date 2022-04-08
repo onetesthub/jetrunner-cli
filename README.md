@@ -39,7 +39,7 @@ After successfull installation of node package, the very first thing is you need
 
 Config File is a JSON file in which we create a JSON object. Where we can create multiple key value pairs. Each key represent to different profile. You can name it as profile1, profile2 or as you want, it's up to you.
 
-Each profile further contains the JSON object, where we can pass multiple key value pairs, for example projectPath, iteration, delay, timeout, env etc. Each key contains values as per your need.
+Each profile further contains the JSON object, where we can pass multiple key value pairs, for example project, iteration, delay, timeout, env etc. Each key contains values as per your need.
 
 Click <a href="https://jetmanlabs.com/maindoc.html#runnercli_gettingStarted" download>here</a> to download configfile.json. After downloading just move that file to location where you feel comfortable to access it later from command line and replace the default values as per your need.
 
@@ -67,7 +67,7 @@ Note: If you get access error while running the command, please run command as s
 
 | **Options** | **Detail** |
 | :--- | :--- |
-| **-p, --projectPath [Folder Path]** | Specify the path of a Jetman Project to run |
+| **-p, --project [Folder Path]** | Specify the path of a Jetman Project to run |
 | **-c, --configFile [File Path]** | Specify the path of a Jetman configuration file |
 | **--profile [Object Key]** | Specify the profile to select from Jetman configuration file |
 
