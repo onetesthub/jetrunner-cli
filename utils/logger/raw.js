@@ -81,25 +81,31 @@ const PrintMessage = (message) => {
 const PrintWarning = (message) => {
 	consoleLog(`${red(message)}\n`);
 };
-const PrintRequestDetail = ({requestResponseDetail,showAll=false}) =>{
-	try{
-	let {requestMetaData} = requestResponseDetail;
-	requestResponseDetail['requestMetaData'] && delete requestResponseDetail['requestMetaData'];
+const PrintRequestDetail = ({ requestResponseDetail, showAll = false }) => {
+	try {
+		let { requestMetaData } = requestResponseDetail;
+		requestResponseDetail['requestMetaData'] && delete requestResponseDetail['requestMetaData'];
 
-	
-		if(requestMetaData.requestStatus == 'Fail'){
-			consoleLog(`sno:${redUL(requestMetaData.count)} | suite:${redUL(requestMetaData.suiteName)} | req:${redUL(requestMetaData.requestName)}| StatusCode:${redUL(requestMetaData.statusCode)} | Assertion status:${redUL(requestMetaData.assertionResult)} | req status:${redUL(requestMetaData.requestStatus)}\n`);
-			console.dir(requestResponseDetail,{ depth: 4 });
+		if (requestMetaData.requestStatus == 'Fail') {
+			consoleLog(
+				`sno:${redUL(requestMetaData.count)} | suite:${redUL(requestMetaData.suiteName)} | req:${redUL(requestMetaData.requestName)}| StatusCode:${redUL(requestMetaData.statusCode)} | Assertion status:${redUL(requestMetaData.assertionResult)} | req status:${redUL(requestMetaData.requestStatus)}\n`
+				);
+				if(requestMetaData.errorDetail){
+					consoleLog(redUL(requestMetaData.errorDetail))
+				}
+			console.dir(requestResponseDetail, { depth: 4 });
+		} else if (requestMetaData.requestStatus == 'Pass' && showAll) {
+			consoleLog(
+				`sno:${greenUL(requestMetaData.count)} | suite:${greenUL(requestMetaData.suiteName)} | req:${greenUL(requestMetaData.requestName)} | StatusCode:${greenUL(requestMetaData.statusCode)} |Assertion status:${greenUL(requestMetaData.assertionResult)} | req status:${greenUL(
+					requestMetaData.requestStatus
+				)}\n`
+			);
+			console.dir(requestResponseDetail, { depth: 4 });
 		}
-		else if(requestMetaData.requestStatus == 'Pass' && showAll){
-			consoleLog(`sno:${greenUL(requestMetaData.count)} | suite:${greenUL(requestMetaData.suiteName)} | req:${greenUL(requestMetaData.requestName)} | StatusCode:${greenUL(requestMetaData.statusCode)} |Assertion status:${greenUL(requestMetaData.assertionResult)} | req status:${greenUL(requestMetaData.requestStatus)}\n`);
-			console.dir(requestResponseDetail,{ depth: 4 });
-		}
-	}
-	catch(error){
+	} catch (error) {
 		consoleLog('Error occured in printing PrintRequestDetail..', error.message);
 	}
-}
+};
 
 let Log = { log, Pass, Fail, AssertionFail, Message, Welcome, SuiteLabel, PrintTableLabel, PrintSummary, PrintMessage, PrintRequestDetail, PrintWarning };
 

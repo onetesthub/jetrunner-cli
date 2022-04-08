@@ -39,7 +39,7 @@ module.exports = ExecuteProject = (configArgments) => {
 			!env && consoleLog('Note: No env passed, Findings if any active env was selected in Jetman app..');
 
 			let activeEnv, activeEnvObj;
-			
+
 			if (envDbResponse.status == 'success' && envDbResponse.message == 'Data fetched') {
 				envDbResponse.data.forEach((envObj) => {
 					if (env && envObj.envName == env) {
@@ -53,13 +53,13 @@ module.exports = ExecuteProject = (configArgments) => {
 					}
 				});
 			}
-			if(!env && activeEnv && activeEnvObj){
+			if (!env && activeEnv && activeEnvObj) {
 				env = activeEnv;
 				selectedEnvObj = activeEnvObj;
 			}
 			consoleLog('\nEnv name is: ', env);
 
-			!(Object.keys(selectedEnvObj).length==0) ? consoleLog('Fetched Env params are: ',selectedEnvObj): PrintWarning('No parameters found in env object ... This could cause test to fail, please review env name.')
+			!(Object.keys(selectedEnvObj).length == 0) ? consoleLog('Fetched Env params are: ', selectedEnvObj) : PrintWarning('No parameters found in env object ... This could cause test to fail, please review env name.');
 			// getting all root level suites
 			let getAllRootSuites = await suiteData.getAllRootSuites();
 			if (getAllRootSuites.status !== 'success') {
@@ -148,7 +148,9 @@ const Execute = ({ data, iteration, envObj, projectName, debug, showAll, timeout
 							timeStamp: timeStamp,
 							assertionResult: assertionResult.status,
 						};
-
+						if (response.status && response.status === 'error') {
+							metricData.errorDetail = response.message ? response.message : '';
+						}
 						//check if any assertion fails, fail the request.
 						if (assertionResult.status.toLowerCase().includes('fail') && assertionResult.errorMessage) {
 							metricData['assertionFailureReason'] = assertionResult.errorMessage;
@@ -279,8 +281,7 @@ const CheckAssertion = ({ assertionText, request, response }) => {
 			assertionResult.status = 'error'; //keeping it testFailed so that current dashboard can work. Later change to Assertion Pass, Assertion Fail here and in App Runner, Mkto
 			assertionResult.errorType = 'unexpected_assertion_process_error';
 			assertionResult.errorMessage = error;
-			assertionResult.message= error,
-			resolve(assertionResult);
+			(assertionResult.message = error), resolve(assertionResult);
 		}
 	});
 };
@@ -297,8 +298,8 @@ const ExtractDynamicVariables = ({ extractorText, response, request }) => {
 			resolve();
 		} catch (error) {
 			console.log('error :>> ', error);
-			error && error.message ? message = error.message : 'Unexpected error';
-			reject({ status: "error", message });
+			error && error.message ? (message = error.message) : 'Unexpected error';
+			reject({ status: 'error', message });
 		}
 	});
 };
