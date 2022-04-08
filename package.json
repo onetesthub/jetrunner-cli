@@ -1,6 +1,6 @@
 {
 	"name": "jetrunner-cli",
-	"version": "9.0.0",
+	"version": "10.0.0",
 	"description": "CLI client to run Jetman projects",
 	"main": "index.js",
 	"scripts": {
