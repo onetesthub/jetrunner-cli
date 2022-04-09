@@ -6,6 +6,9 @@ const sendRequest = (reqObject, timeout) => {
 		try {
 			let axiosObject = {};
 			axiosObject['method'] = `${reqObject.type}`;
+			if (!reqObject.url.includes('http')) {
+				reqObject.url = 'http://' + reqObject.url;
+			}
 			axiosObject['url'] = `${reqObject.url}`;
 			if (reqObject.params) {
 				axiosObject['params'] = reqObject.params;
