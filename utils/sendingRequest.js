@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { consoleLog } = require('./logger');
+const helper = require('./helper');
 
 const sendRequest = (reqObject, timeout) => {
 	return new Promise((resolve, reject) => {
@@ -15,6 +16,11 @@ const sendRequest = (reqObject, timeout) => {
 			}
 			if (reqObject.headers) {
 				axiosObject['headers'] = reqObject.headers;
+			}
+
+			if(reqObject.auth){
+				const authHeader = helper.setAuth(reqObject.auth);
+				reqObject.headers ? Object.assign(reqObject.headers , authHeader) : reqObject.headers=authHeader;
 			}
 			let data;
 			try {
