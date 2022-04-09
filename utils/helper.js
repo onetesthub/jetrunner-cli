@@ -3,6 +3,8 @@ const fs = require('fs');
 const pkg = require('./../package.json');
 const axios = require('axios');
 const { consoleLog } = require('./logger');
+var atob = require('atob');
+var btoa = require('btoa');
 
 module.exports = {
 	GetInstallationPath: () => {
@@ -78,21 +80,21 @@ module.exports = {
 		}
 		)
 	},
-	GetParseAuth: (data) => {
+	GetParseAuth: function (data){
 		try {
-			return JSON.parse(decodeURIComponent(window.atob(data)));
+			return JSON.parse(decodeURIComponent(atob(data)));
 		} catch (error) {
 			return;
 		}
 	},
-	setAuth: (auth) =>{
+	setAuth: function (auth){
 		if (!auth) return;
-		const parsedAuth = this.GetParseAuth(auth);
+		let parsedAuth = this.GetParseAuth(auth);
 		if (!parsedAuth) return;
 		let authString;
 		switch (parsedAuth.type.toLowerCase()) {
 			case 'basic':
-				authString = `Basic ${window.btoa(parsedAuth.data.username + ':' + parsedAuth.data.password)}`;
+				authString = `Basic ${btoa(parsedAuth.data.username + ':' + parsedAuth.data.password)}`;
 				break;
 			case 'bearer':
 				authString = `Bearer ${parsedAuth.data.token}`;
@@ -103,6 +105,6 @@ module.exports = {
 			default:
 				return;
 		}
-		return {Authorization:mauthString};
+		return {Authorization:authString};
 	}
 };

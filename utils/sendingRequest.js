@@ -17,7 +17,6 @@ const sendRequest = (reqObject, timeout) => {
 			if (reqObject.headers) {
 				axiosObject['headers'] = reqObject.headers;
 			}
-
 			if(reqObject.auth){
 				const authHeader = helper.setAuth(reqObject.auth);
 				reqObject.headers ? Object.assign(reqObject.headers , authHeader) : reqObject.headers=authHeader;
