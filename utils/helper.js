@@ -77,5 +77,32 @@ module.exports = {
 			},value)
 		}
 		)
+	},
+	GetParseAuth: (data) => {
+		try {
+			return JSON.parse(decodeURIComponent(window.atob(data)));
+		} catch (error) {
+			return;
+		}
+	},
+	setAuth: (auth) =>{
+		if (!auth) return;
+		const parsedAuth = this.GetParseAuth(auth);
+		if (!parsedAuth) return;
+		let authString;
+		switch (parsedAuth.type.toLowerCase()) {
+			case 'basic':
+				authString = `Basic ${window.btoa(parsedAuth.data.username + ':' + parsedAuth.data.password)}`;
+				break;
+			case 'bearer':
+				authString = `Bearer ${parsedAuth.data.token}`;
+				break;
+			case 'custom':
+				authString = `${parsedAuth.data.token}`;
+				break;
+			default:
+				return;
+		}
+		return {Authorization:mauthString};
 	}
 };
