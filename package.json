@@ -1,6 +1,6 @@
 {
 	"name": "jetrunner-cli",
-	"version": "11.0.0",
+	"version": "12.0.0",
 	"description": "CLI client to run Jetman projects",
 	"main": "index.js",
 	"scripts": {
@@ -40,7 +40,9 @@
 	},
 	"homepage": "https://github.com/onetesthub/jetrunner-cli#readme",
 	"dependencies": {
+		"atob": "^2.1.2",
 		"axios": "^0.26.1",
+		"btoa": "^1.2.1",
 		"chai": "^4.3.6",
 		"chalk": "4.1.0",
 		"cli-alerts": "1.2.2",
