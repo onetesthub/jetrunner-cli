@@ -11,9 +11,9 @@ As a advance user, If you want to run the API's project in CLI, Install the jetr
 
 - [Getting Started](#getting-started)
 - [Options](#options)
-  - [Jetrunner-cli Help](#jetrunn-cli-help)
+  - [Jetrunner-cli Help](#jetrunner-cli-help)
   - [Run Time Options](#run-time-options)
-- [Links] (#links)
+- [Links](#links)
 ## Getting Started ##
 
 **Installation**
@@ -92,7 +92,7 @@ Jetrunner CLI provides a rich set of options to customize a run. You can retriev
 
 > $ jetrunner-cli --configfile "/path/of/configfile.json"
 ## Links ##
-**[Jetman App website](https://jetmanlabs.com)**
+- **[Jetman App website](https://jetmanlabs.com)**
 - **[Documentation](https://jetmanlabs.com/jetmanDoc/#Jetman-CLI)**
 - <a href="https://jetmanlabs.com/assets/configfile.json" download>Download configfile.json</a>
 
