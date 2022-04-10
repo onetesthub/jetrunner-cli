@@ -89,8 +89,6 @@ Jetrunner CLI provides a rich set of options to customize a run. You can retriev
   --debug        Prints parsed arguments, default true to show failed request logs, default true                                      
   --showAll      Display detailed log data for requests/response, default false. (show only failed requests logs. works with --debug  
   --publish      Publish data to dashboard (Jetman dashboard). This feature is not supported yet. 
-
-> $ jetrunner-cli --configfile "/path/of/configfile.json"
 ## Links ##
 - **[Jetman App website](https://jetmanlabs.com)**
 - **[Documentation](https://jetmanlabs.com/jetmanDoc/#Jetman-CLI)**
