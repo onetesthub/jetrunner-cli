@@ -11,8 +11,8 @@ As a advance user, If you want to run the API's project in CLI, Install the jetr
 
 - [Getting Started](#getting-started)
 - [Options](#options)
-  - [Jetrunner CLI Help](#jetrunn-cli help)
-  - [Run Time Options](#run time options)
+  - [Jetrunner-cli Help](#jetrunn-cli-help)
+  - [Run Time Options](#run-time-options)
 - [Links] (#links)
 ## Getting Started ##
 
@@ -68,14 +68,14 @@ steps:
 # Options #
 
 
-## jetrunner-cli help ##
+## Jetrunner-cli Help ##
 Jetrunner CLI provides a rich set of options to customize a run. You can retrieve a list of options by running it with **jetrunner-cli --help** .
 
 | **Options** | **Detail** |
 | :--- | :--- |
 | **--help** | Output various run time options to use |
 | **--version** | Output the version number |
-## run time options ##
+## Run Time Options ##
 
   --project      Full absolute path of project to run. Relative path is not recommended.                                              
   --delay        Delay (in ms)                                                                                                        
