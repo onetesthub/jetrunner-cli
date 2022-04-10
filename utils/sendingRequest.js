@@ -14,12 +14,12 @@ const sendRequest = (reqObject, timeout) => {
 			if (reqObject.params) {
 				axiosObject['params'] = reqObject.params;
 			}
+			if (reqObject.auth) {
+				const authHeader = helper.setAuth(reqObject.auth);
+				reqObject.headers ? Object.assign(reqObject.headers, authHeader) : (reqObject.headers = authHeader);
+			}
 			if (reqObject.headers) {
 				axiosObject['headers'] = reqObject.headers;
-			}
-			if(reqObject.auth){
-				const authHeader = helper.setAuth(reqObject.auth);
-				reqObject.headers ? Object.assign(reqObject.headers , authHeader) : reqObject.headers=authHeader;
 			}
 			let data;
 			try {
@@ -44,17 +44,17 @@ const sendRequest = (reqObject, timeout) => {
 						contentLength: response.headers['content-length'],
 						elapsedTime: endTime - startTime,
 						timestamp: startTime,
-						request:axiosObject,
-						response:response
+						request: axiosObject,
+						response: response,
 					});
 				})
 				.catch(function (error) {
 					//consoleLog('Error occured in Request object->');
 					//console.dir(axiosObject.url,{ depth: 4 })
-					if(!error.response){
+					if (!error.response) {
 						return resolve({
-							status: "error",
-							message: `Error in send request with url: ${reqObject.url}`
+							status: 'error',
+							message: `Error in send request with url: ${reqObject.url}`,
 						});
 					}
 
@@ -68,17 +68,15 @@ const sendRequest = (reqObject, timeout) => {
 						contentLength: error.response ? error.response.headers['content-length'] : '',
 						elapsedTime: endTime - startTime,
 						timestamp: startTime,
-						request:axiosObject,
-						response:error.response
+						request: axiosObject,
+						response: error.response,
 					});
 				});
 		} catch (error) {
-			resolve(
-				{
-					status: "error",
-					message: "Error in send request with having error " + error
-				}
-			);
+			resolve({
+				status: 'error',
+				message: 'Error in send request with having error ' + error,
+			});
 		}
 	});
 };
