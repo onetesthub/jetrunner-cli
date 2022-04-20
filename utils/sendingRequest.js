@@ -1,4 +1,6 @@
 const axios = require('axios');
+var FormData = require('form-data');
+var fs = require('fs');
 const { consoleLog } = require('./logger');
 const helper = require('./helper');
 
@@ -21,11 +23,43 @@ const sendRequest = (reqObject, timeout) => {
 			if (reqObject.headers) {
 				axiosObject['headers'] = reqObject.headers;
 			}
+
+			if(reqObject['req_body_type'] === 'body_form') {
+				if(axiosObject['headers']['content-type']){
+					delete axiosObject['headers']['content-type']
+				}
+				else if(axiosObject['headers']['Content-Type']){
+					delete axiosObject['headers']['Content-Type']
+				}
+			}
 			let data;
 			try {
 				data = JSON.parse(reqObject.data);
 			} catch (error) {
 				data = reqObject.data;
+				if (data) {
+					if (reqObject['req_body_type'] === 'body_form') {
+						let reqBody = new FormData();
+						for (let key in data) {
+							let value = data[key];
+							reqBody.append(key, value);
+						}
+						data = reqBody;
+					} else if (reqObject['req_body_type'] === 'request_body_editor') {
+						//do nothing as it is handeled in try block.
+					} else if (reqObject['req_body_type'] === 'urlencoded_form') {
+						postData = Object.keys(data)
+							.map(function (key) {
+								return (
+									encodeURIComponent(key) +
+									'=' +
+									encodeURIComponent(bodyData[key])
+								);
+							})
+							.join('&');
+						data = postData;
+					}
+				}
 			}
 			if (data) {
 				axiosObject['data'] = data;

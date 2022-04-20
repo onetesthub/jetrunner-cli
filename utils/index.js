@@ -255,15 +255,13 @@ const CheckAssertion = ({ assertionText, request, response }) => {
 				assertionResult.errorMessage = 'Assertion parsing failed, Not a valid assertion text.';
 				resolve(assertionResult);
 			} else if (assertionText && assertionText.length) {
-				const assertions = assertionText.split('\n');
-				for (const assertion of assertions) {
 					try {
-						eval(assertion);
+						eval(assertionText);
 						assertionResult.status = 'testPassed'; //keeping it testPassed so that current dashboard can work. Later change to Assertion Pass, Assertion Pass here and in App Runner, Mkto
 						//save result of assert statements in array of object
 					} catch (error) {
 						let errObj = {
-							assertText: assertion,
+							assertText: assertionText,
 							failureReason: error.message,
 							actual: error.actual,
 							expected: error.expected,
@@ -274,7 +272,6 @@ const CheckAssertion = ({ assertionText, request, response }) => {
 						assertionResult.errorType = 'assertion_validations_failed';
 						assertionResult.errorMessage = assertionResult.errorMessage ? assertionResult.errorMessage + '\n' + error.message : error.message;
 					}
-				}
 			}
 			resolve(assertionResult);
 		} catch (error) {

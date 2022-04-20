@@ -1,6 +1,6 @@
 {
 	"name": "jetrunner-cli",
-	"version": "14.0.0",
+	"version": "16.0.0",
 	"description": "CLI client to run Jetman projects",
 	"main": "index.js",
 	"scripts": {
@@ -50,6 +50,8 @@
 		"cli-handle-unhandled": "1.1.1",
 		"cli-table3": "0.6.1",
 		"cli-welcome": "2.2.2",
+		"form-data": "^4.0.0",
+		"fs": "^0.0.1-security",
 		"get-installed-path": "4.0.8",
 		"jetRunner": "github:onetesthub/JetRunner#master",
 		"log-symbols": "^4.1.0",
