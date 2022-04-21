@@ -23,15 +23,6 @@ const sendRequest = (reqObject, timeout) => {
 			if (reqObject.headers) {
 				axiosObject['headers'] = reqObject.headers;
 			}
-
-			if(reqObject['req_body_type'] === 'body_form') {
-				if(axiosObject['headers']['content-type']){
-					delete axiosObject['headers']['content-type']
-				}
-				else if(axiosObject['headers']['Content-Type']){
-					delete axiosObject['headers']['Content-Type']
-				}
-			}
 			let data;
 			try {
 				data = JSON.parse(reqObject.data);
@@ -44,17 +35,19 @@ const sendRequest = (reqObject, timeout) => {
 							let value = data[key];
 							reqBody.append(key, value);
 						}
+						//update headers
+						if (axiosObject['headers']['content-type'] || axiosObject['headers']['Content-Type']) {
+							delete axiosObject['headers']['content-type'];
+							delete axiosObject['headers']['Content-Type'];
+							axiosObject['headers']['Content-Type'] = (reqBody.getHeaders())['content-type'];
+						}
 						data = reqBody;
 					} else if (reqObject['req_body_type'] === 'request_body_editor') {
 						//do nothing as it is handeled in try block.
 					} else if (reqObject['req_body_type'] === 'urlencoded_form') {
 						postData = Object.keys(data)
 							.map(function (key) {
-								return (
-									encodeURIComponent(key) +
-									'=' +
-									encodeURIComponent(bodyData[key])
-								);
+								return encodeURIComponent(key) + '=' + encodeURIComponent(bodyData[key]);
 							})
 							.join('&');
 						data = postData;
