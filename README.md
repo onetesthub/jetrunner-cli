@@ -75,20 +75,22 @@ Jetrunner CLI provides a rich set of options to customize a run. You can retriev
 | :--- | :--- |
 | **--help** | Output various run time options to use |
 | **--version** | Output the version number |
-## Run Time Options ##
+## Command line Options ##
 
-  --project      Full absolute path of project to run. Relative path is not recommended.                                              
-  --delay        Delay (in ms)                                                                                                        
-  --iteration    number of iterations to run, default 1                                                                               
-  --timeout      Request timeout (in ms), default 60000 ms                                                                            
-  --configFile   path of a Jetman configuration file                                                                                  
-  --env          Active enviroment template, if ot given default env will taken                                                       
-  --tokenId      Jetman token (to publish data to dashboard). Not supported at the moment.                                            
-  --profile      Profile name from config file. This option works with config file having multiple profiles.                          
-  --clear        Clear the console, default false                                                                                     
-  --debug        Prints parsed arguments, default true to show failed request logs, default true                                      
-  --showAll      Display detailed log data for requests/response, default false. (show only failed requests logs. works with --debug  
-  --publish      Publish data to dashboard (Jetman dashboard). This feature is not supported yet. 
+| **Options** | **Detail** |
+| :--- | :--- |
+| **--project** |      Full absolute path of project to run. Relative path is not recommended.|                                              
+| **--delay** |        Delay (in ms)|                                                                                                       
+| **--iteration** |    number of iterations to run, default 1|                                                                               
+| **--timeout** |      Request timeout (in ms), default 60000 ms|                                                                            
+| **--configFile** |   path of a Jetman configuration file|                                                                                  
+| **--env** |          Active enviroment template, if ot given default env will taken|                                                       
+| **--tokenId** |      Jetman token (to publish data to dashboard). Not supported at the moment.|                                            
+| **--profile** |      Profile name from config file. This option works with config file having multiple profiles.|                          
+| **--clear** |        Clear the console, default false|                                                                                     
+| **--debug** |        Prints parsed arguments, default true to show failed request logs, default true|                                      
+| **--showAll** |      Display detailed log data for requests/response, default false. (show only failed requests logs. works with --debug|  
+| **--publish** |      Publish data to dashboard (Jetman dashboard). This feature is not supported yet.| 
 ## Links ##
 - **[Jetman App website](https://jetmanlabs.com)**
 - **[Documentation](https://jetmanlabs.com/docs/#Jetman-CLI)**
