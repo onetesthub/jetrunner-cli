@@ -93,6 +93,6 @@ Jetrunner CLI provides a rich set of options to customize a run. You can retriev
 | **--publish** |      Publish data to dashboard (Jetman dashboard). This feature is not supported yet.| 
 ## Links ##
 - **[Jetman App website](https://jetmanlabs.com)**
-- **[Documentation](https://jetmanlabs.com/docs/#Jetman-CLI)**
+- **[Documentation](https://github.com/jetmanlabs/app/wiki#Jetrunner-cli-Run-APi-suites-from-command-line)**
 - <a href="https://jetmanlabs.com/assets/configfile.json" download>Download configfile.json</a>
 
