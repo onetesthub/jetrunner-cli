@@ -57,7 +57,7 @@ let flags = cli.flags;
 	} catch (error) {
 		// todo: log error
 		consoleLog('\n',error.message);
-		consoleLog(' Run ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments or read docs for more information ', 'https://jetmanlabs.com/docs/#Jetman-CLI\n');
+		consoleLog(' Run ' + chalk.bold('jetrunner-cli --help') + ' for command line arguments or read docs for more information ', 'https://github.com/jetmanlabs/app/wiki#Jetrunner-cli-Run-APi-suites-from-command-line\n');
 		process.exit(1);
 	}
 })();
