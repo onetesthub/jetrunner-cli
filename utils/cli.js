@@ -49,7 +49,11 @@ const flags = {
 	publish: {
 		type: 'string',
 		desc: 'Publish data to dashboard (Jetman dashboard). This feature is not supported yet.',
-	}
+	},
+	concurrency: {
+		type: 'number',
+		desc: 'Number of concurrent request to send',
+	},
 };
 
 let helpText = `Usage: Jetrunner-cli [options]
